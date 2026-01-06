@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 617f1338d53ad3548ae4e10974597bcd, type: 3}
+  m_Name: SpawnPoint
+  m_EditorClassIdentifier: Assembly-CSharp::MapTileData
+  <TileData>k__BackingField: {fileID: 11400000, guid: d0f8d7243b28b604a8ea971015ec1b12, type: 2}
+  <TileCollisionOption>k__BackingField: 2
+  <CollisionBound>k__BackingField:
+    Type: 1
+    Width: 1

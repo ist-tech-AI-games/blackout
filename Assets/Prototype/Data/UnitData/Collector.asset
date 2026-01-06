@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd06dc7d797413b46a65755a55784fde, type: 3}
+  m_Name: Collector
+  m_EditorClassIdentifier: Assembly-CSharp::UnitData
+  <Sprite>k__BackingField: {fileID: 4044135181421474729, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
+  <CollisionBound>k__BackingField:
+    Type: 0
+    Width: 0.55
+  <Speed>k__BackingField: 3
+  <Collectable>k__BackingField: 1
+  <Beats>k__BackingField:
+  - {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
