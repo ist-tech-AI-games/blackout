@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour, IMapObject
 {
+    // Events
+    public event Action<UnitData> OnClassChanged;
+
     [field: SerializeField]
     public UnitData UnitData { get; private set; }
 
@@ -40,6 +43,12 @@ public class Unit : MonoBehaviour, IMapObject
     public void SetUnitClass(UnitData unitData)
     {
         UnitData = unitData;
+        if (!unitData.Collectable && holdingItem != null)
+        {
+            holdingItem.OnDestroyed();
+            holdingItem = null;
+        }
+        OnClassChanged?.Invoke(unitData);
     }
 
     public void Move(Vector2 input)
@@ -52,7 +61,7 @@ public class Unit : MonoBehaviour, IMapObject
     // NOTE: This does not check for the tile collision, so DON'T teleport to blocking tile.
     public void Teleport(Vector2Int pos)
     {
-        ChangePos(pos);
+        ChangePos(gameManager.CellToCenterWorld(pos));
         CheckObjectOverlap(pos);
     }
 
@@ -99,14 +108,21 @@ public class Unit : MonoBehaviour, IMapObject
 
     public void OnOverlapped(IMapObject other)
     {
+        Debug.Log($"Overlap: {this}, {other}");
         if (other is Unit otherUnit)
         {
-            if (otherUnit.Team != Team && UnitData.Beats.Contains(otherUnit.UnitData))
-                otherUnit.Die();
-            return;
+            if (otherUnit.Team != Team)
+            {
+                UnitData otherUnitData = otherUnit.UnitData;
+                if (UnitData.Beats.Contains(otherUnitData))
+                    otherUnit.Die();
+                // TODO: 더 근본적인 해결책 찾기
+                if (otherUnitData.Beats.Contains(UnitData))
+                    Die();
+            }
         }
 
-        if (other is ItemObject item)
+        else if (other is ItemObject item)
         {
             if (UnitData.Collectable && holdingItem == null && item.IsInteractable(Team))
             {
@@ -121,6 +137,12 @@ public class Unit : MonoBehaviour, IMapObject
     public void Die()
     {
         Debug.Log($"{gameObject.name} dead");
+        if (holdingItem != null)
+        {
+            holdingItem.OnDestroyed();
+            holdingItem = null;
+        }
+        gameManager.RespawnUnit(this);
     }
 
     private void CheckObjectOverlap(Vector2 pos)

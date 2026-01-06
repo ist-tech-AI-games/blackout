@@ -3273,8 +3273,8 @@ Tilemap:
   - first: {x: 3, y: 5, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 0
-      m_TileSpriteIndex: 0
+      m_TileIndex: 2
+      m_TileSpriteIndex: 2
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -3363,8 +3363,8 @@ Tilemap:
   - first: {x: 12, y: 5, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 0
-      m_TileSpriteIndex: 0
+      m_TileIndex: 2
+      m_TileSpriteIndex: 2
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -4042,15 +4042,19 @@ Tilemap:
       m_AllTileFlags: 1073741825
   m_AnimatedTiles: {}
   m_TileAssetArray:
-  - m_RefCount: 95
+  - m_RefCount: 93
     m_Data: {fileID: 11400000, guid: 881b4c322da25054fa7823f72f228df3, type: 2}
   - m_RefCount: 65
     m_Data: {fileID: 11400000, guid: 0153e0a7c28aeaa40b62a15e0658e2ec, type: 2}
+  - m_RefCount: 2
+    m_Data: {fileID: 11400000, guid: d0f8d7243b28b604a8ea971015ec1b12, type: 2}
   m_TileSpriteArray:
-  - m_RefCount: 95
+  - m_RefCount: 93
     m_Data: {fileID: 92989056756014024, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
   - m_RefCount: 65
     m_Data: {fileID: 4352395366410277302, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
+  - m_RefCount: 2
+    m_Data: {fileID: 2581085004917842788, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 160
     m_Data:
@@ -4452,6 +4456,7 @@ GameObject:
   - component: {fileID: 2101514194}
   - component: {fileID: 2101514193}
   - component: {fileID: 2101514196}
+  - component: {fileID: 2101514197}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -4484,11 +4489,27 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 168bad32d18db8545b87126119c85a01, type: 2}
   - {fileID: 11400000, guid: 4c880f508bb348c4d83f8c6f38ae0575, type: 2}
   defaultTile: {fileID: 11400000, guid: 4c880f508bb348c4d83f8c6f38ae0575, type: 2}
-  regions: []
+  regions:
+  - Name: Team A Base
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 1
+      y: 1
+      width: 3
+      height: 8
+  - Name: Team B Base
+    Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    Area:
+    - x: 12
+      y: 1
+      width: 3
+      height: 8
   defaultRegion:
     Name: Default
     Team: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
     Area: []
+  teamASpawnPoint: {x: 3, y: 5}
+  teamBSpawnPoint: {x: 12, y: 5}
 --- !u!114 &2101514194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4502,6 +4523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   mapGenerator: {fileID: 2101514193}
+  teamAreaViewer: {fileID: 2101514197}
   teamA: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
   teamB: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
   neutralTeam: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
@@ -4515,6 +4537,7 @@ MonoBehaviour:
   - {fileID: 1362747389}
   items:
   - {fileID: 298859768}
+  defaultUnitData: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
 --- !u!4 &2101514195
 Transform:
   m_ObjectHideFlags: 0
@@ -4553,6 +4576,19 @@ MonoBehaviour:
   cancelAction: {fileID: 700512702}
   virtualCamera: {fileID: 1775625598}
   cameraMoveSpeed: 5
+--- !u!114 &2101514197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101514192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed50b30409b40ad4aa5a915499734ff6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamAreaViewer
+  tilemap: {fileID: 976056231}
 --- !u!1001 &1968177648282763629
 PrefabInstance:
   m_ObjectHideFlags: 0

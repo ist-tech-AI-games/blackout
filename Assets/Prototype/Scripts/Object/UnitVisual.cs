@@ -10,4 +10,19 @@ public class UnitVisual : MonoBehaviour
         spriteRenderer.sprite = unit.UnitData.Sprite;
         spriteRenderer.color = unit.Team.TeamColor;
     }
+
+    void OnEnable()
+    {
+        unit.OnClassChanged += OnUnitClassChanged;
+    }
+
+    void OnDisable()
+    {
+        unit.OnClassChanged -= OnUnitClassChanged;
+    }
+
+    private void OnUnitClassChanged(UnitData unitData)
+    {
+        spriteRenderer.sprite = unitData.Sprite;
+    }
 }

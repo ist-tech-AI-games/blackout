@@ -29,9 +29,13 @@ public class TilemapLoader : MapGenerator
     // 앞쪽 물체 우선 적용
     [SerializeField]
     private RegionData[] regions;
-
     [SerializeField]
     private RegionData defaultRegion;
+
+    [SerializeField]
+    private Vector2Int teamASpawnPoint;
+    [SerializeField]
+    private Vector2Int teamBSpawnPoint;
 
     public override MapData Generate(GameManager gameManager)
     {
@@ -50,11 +54,11 @@ public class TilemapLoader : MapGenerator
             foreach (var area in regionData.Area)
                 for (int y = area.yMin; y < area.yMax; y++)
                 {
-                    int i = y - area.yMin;
+                    int i = y - mapArea.yMin;
                     for (int x = area.xMin; x < area.xMax; x++)
                         if (mapArea.Contains(new(x, y)))
                         {
-                            int j = x - area.xMin;
+                            int j = x - mapArea.xMin;
                             if (mapTiles[i, j] == null)
                             {
                                 mapTiles[i, j] = new MapTile(
@@ -89,6 +93,8 @@ public class TilemapLoader : MapGenerator
                 defaultMapRegion.MapTiles.Add(mapTiles[i, j]);
             }
 
-        return new MapData(mapTiles, mapRegions.ToArray(), levelMap, new(mapArea.xMin, mapArea.yMax));
+        MapSpaceInfo mapSpaceInfo = new(levelMap, new(mapArea.xMin, mapArea.yMin), teamASpawnPoint, teamBSpawnPoint);
+
+        return new MapData(mapTiles, mapRegions.ToArray(), mapSpaceInfo);
     }
 }

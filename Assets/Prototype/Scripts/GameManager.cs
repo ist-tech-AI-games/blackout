@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField]
     private MapGenerator mapGenerator;
+    [SerializeField]
+    private TeamAreaViewer teamAreaViewer;
 
     [SerializeField]
     private TeamData teamA;
@@ -24,6 +26,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private ItemObject[] items;
 
+    [SerializeField]
+    private UnitData defaultUnitData;
+
     private MapData mapData;
     private Dictionary<TeamData, TeamContext> teamContextTable;
 
@@ -36,6 +41,7 @@ public class GameManager : MonoBehaviour
             {neutralTeam, new(neutralTeam)},
         };
         PrepareMap();
+        teamAreaViewer?.ColorTiles(mapData);
     }
 
     private void PrepareMap()
@@ -45,6 +51,21 @@ public class GameManager : MonoBehaviour
             unit.Initialize(this);
         foreach (var item in items)
             item.Initialize(this);
+    }
+
+    public void RespawnUnit(Unit unit)
+    {
+        if (unit.Team == teamA)
+            unit.Teleport(mapData.MapSpaceInfo.TeamASpawnPoint);
+        else if (unit.Team == teamB)
+            unit.Teleport(mapData.MapSpaceInfo.TeamBSpawnPoint);
+        else
+        {
+            Debug.LogError("Failed to Respawn; An unit should belong to 1 of 2 teams");
+            return;
+        }
+
+        unit.SetUnitClass(defaultUnitData);
     }
 
     public Vector2Int WorldToCell(Vector3 worldPos) => (Vector2Int)tilemap.WorldToCell(worldPos);
