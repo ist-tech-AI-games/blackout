@@ -46,6 +46,7 @@ public class ItemObject : MonoBehaviour, IMapObject
     public void OnDropped(MapTile targetTile)
     {
         State = ItemState.OnGround;
+        transform.SetParent(gameManager.GetItemParent());
         transform.position = gameManager.CellToCenterWorld(targetTile.CellPos);
 
         AddToMap(targetTile);

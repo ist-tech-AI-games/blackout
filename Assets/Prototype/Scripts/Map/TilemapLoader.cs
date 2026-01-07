@@ -18,12 +18,27 @@ public class TilemapLoader : MapGenerator
     [SerializeField]
     private MapTileData defaultTile;
 
+    public enum RegionType
+    {
+        Default, Sanctuary, Storage
+    }
+
     [Serializable]
     public class RegionData
     {
+        // common
         public string Name;
         public TeamData Team;
         public RectInt[] Area;
+
+        // type
+        public RegionType RegionType;
+
+        // storage (no additional fields)
+        // sanctuary
+        public UnitData InputUnitType;
+        public UnitData OutputUnitType;
+        public bool IsLocked;
     }
 
     // 앞쪽 물체 우선 적용
@@ -47,7 +62,24 @@ public class TilemapLoader : MapGenerator
         List<MapRegion> mapRegions = new(16);
         foreach (var regionData in regions)
         {
-            MapRegion mapRegion = new MapRegion();
+            MapRegion mapRegion;
+            switch (regionData.RegionType)
+            {
+                case RegionType.Sanctuary:
+                    mapRegion = new Sanctuary() {
+                        TargetInputData = regionData.InputUnitType,
+                        ResultOutputData = regionData.OutputUnitType,
+                        IsUniqueInstanceConstraint = regionData.IsLocked
+                    };
+                    break;
+                case RegionType.Storage:
+                    mapRegion = new Storage();
+                    break;
+                default:
+                    mapRegion = new MapRegion();
+                    break;
+            }
+
             mapRegion.OwnedTeam = regionData.Team;
             mapRegions.Add(mapRegion);
 

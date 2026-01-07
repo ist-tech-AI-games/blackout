@@ -6,6 +6,7 @@ public class Unit : MonoBehaviour, IMapObject
 {
     // Events
     public event Action<UnitData> OnClassChanged;
+    public event Action<Unit> OnUnitDead;
 
     [field: SerializeField]
     public UnitData UnitData { get; private set; }
@@ -19,7 +20,7 @@ public class Unit : MonoBehaviour, IMapObject
     [SerializeField] private Transform itemHolder;
 
     private GameManager gameManager;
-    private ItemObject holdingItem = null;
+    public ItemObject HoldingItem { get; private set; } = null;
 
     private static readonly Vector2Int[] neighborDelta = new Vector2Int[]
     {
@@ -43,12 +44,17 @@ public class Unit : MonoBehaviour, IMapObject
     public void SetUnitClass(UnitData unitData)
     {
         UnitData = unitData;
-        if (!unitData.Collectable && holdingItem != null)
+        if (!unitData.Collectable && HoldingItem != null)
         {
-            holdingItem.OnDestroyed();
-            holdingItem = null;
+            HoldingItem.OnDestroyed();
+            HoldingItem = null;
         }
         OnClassChanged?.Invoke(unitData);
+    }
+
+    public void DropItem()
+    {
+        HoldingItem = null;
     }
 
     public void Move(Vector2 input)
@@ -73,7 +79,13 @@ public class Unit : MonoBehaviour, IMapObject
         {
             OwnedTile.OnObjectExit(this);
             currentTile.OnObjectEnter(this);
+            MapRegion prevRegion = OwnedTile.OwnedRegion;
             OwnedTile = currentTile;
+            if (prevRegion != OwnedTile.OwnedRegion)
+            {
+                prevRegion.OnUnitExit(this);
+                OwnedTile.OwnedRegion.OnUnitEnter(this);
+            }
         }
 
         transform.position = targetPosition;
@@ -124,9 +136,9 @@ public class Unit : MonoBehaviour, IMapObject
 
         else if (other is ItemObject item)
         {
-            if (UnitData.Collectable && holdingItem == null && item.IsInteractable(Team))
+            if (UnitData.Collectable && HoldingItem == null && item.IsInteractable(Team))
             {
-                holdingItem = item;
+                HoldingItem = item;
                 item.OnPickedUp(this);
                 item.transform.SetParent(itemHolder);
                 item.transform.localPosition = Vector3.zero;
@@ -137,12 +149,13 @@ public class Unit : MonoBehaviour, IMapObject
     public void Die()
     {
         Debug.Log($"{gameObject.name} dead");
-        if (holdingItem != null)
+        if (HoldingItem != null)
         {
-            holdingItem.OnDestroyed();
-            holdingItem = null;
+            HoldingItem.OnDestroyed();
+            HoldingItem = null;
         }
         gameManager.RespawnUnit(this);
+        OnUnitDead?.Invoke(this);
     }
 
     private void CheckObjectOverlap(Vector2 pos)

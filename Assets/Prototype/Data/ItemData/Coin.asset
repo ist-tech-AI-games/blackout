@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   <Sprite>k__BackingField: {fileID: 584332810, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
   <Effect>k__BackingField: {fileID: 11400000, guid: 55ff41d363c2d7042937fcfbd2c55a54, type: 2}
-  <MaxItemAmount>k__BackingField: 30
+  <MaxItemAmount>k__BackingField: 10
   <CollisionBound>k__BackingField:
     Type: 0
     Width: 0.6

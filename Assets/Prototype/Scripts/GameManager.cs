@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
     private Unit[] units;
     [SerializeField]
     private ItemObject[] items;
+    [SerializeField]
+    private Transform itemParent;
 
     [SerializeField]
     private UnitData defaultUnitData;
@@ -67,6 +69,8 @@ public class GameManager : MonoBehaviour
 
         unit.SetUnitClass(defaultUnitData);
     }
+
+    public Transform GetItemParent() => itemParent;
 
     public Vector2Int WorldToCell(Vector3 worldPos) => (Vector2Int)tilemap.WorldToCell(worldPos);
 
