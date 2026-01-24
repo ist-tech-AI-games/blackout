@@ -11,20 +11,11 @@ public class Sanctuary : MapRegion
     {
         if (IsUniqueInstanceConstraint && lockedUnit != null) return;
 
-        if (unit.UnitData == TargetInputData)
-        {
-            PerformTransformation(unit);
-        }
-    }
+        bool success = unit.TryTransform(TargetInputData, ResultOutputData);
 
-    private void PerformTransformation(Unit unit)
-    {
-        unit.SetUnitClass(ResultOutputData);
-        
-        if (IsUniqueInstanceConstraint)
+        if (success && IsUniqueInstanceConstraint)
         {
             lockedUnit = unit;
-            
             unit.OnUnitDead += OnLockedUnitDead;
         }
     }

@@ -36,6 +36,32 @@ public class Unit : MonoBehaviour, IMapObject
         OwnedTile.OnObjectEnter(this);
     }
 
+    /// <summary>
+    /// 성소가 요청. 조건이 맞으면 변신.
+    /// </summary>
+    /// <returns>변신 성공 여부</returns>
+    public bool TryTransform(UnitData requiredInput, UnitData targetOutput)
+    {
+        if (UnitData != requiredInput) return false;
+
+        SetUnitClass(targetOutput);
+        return true;
+    }
+
+    /// <summary>
+    /// 창고가 요청. 들고 있는 아이템 가져 옴 (이전. 대여 아님.)
+    /// </summary>
+    public ItemObject RetrieveItem()
+    {
+        if (HoldingItem == null) return null;
+
+        ItemObject item = HoldingItem;
+        HoldingItem = null;
+        
+        // (선택사항) 아이템 부모 관계 해제 등은 ItemObject.OnDropped에서 처리됨
+        return item;
+    }
+
     public void SetUnitClass(UnitData unitData)
     {
         UnitData = unitData;
@@ -46,11 +72,6 @@ public class Unit : MonoBehaviour, IMapObject
             HoldingItem = null;
         }
         OnClassChanged?.Invoke(unitData);
-    }
-
-    public void DropItem()
-    {
-        HoldingItem = null;
     }
 
     public void Move(Vector2 input)

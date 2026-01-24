@@ -18,9 +18,9 @@ public class Storage : MapRegion
         (bool shouldRelease, bool shouldDestory) = TryDistributeItem(unit.HoldingItem);
         if (shouldRelease)
         {
+            ItemObject item = unit.RetrieveItem();
             if (shouldDestory)
-                unit.HoldingItem.OnDestroyed();
-            unit.DropItem();
+                item.OnDestroyed();
         }
         else
         {
