@@ -4545,7 +4545,7 @@ MonoBehaviour:
       y: 5
       width: 1
       height: 1
-    RegionType: 1
+    Type: 1
     InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
     OutputUnitType: {fileID: 11400000, guid: f9863980f99768043b410dd37e66ccdd, type: 2}
     IsLocked: 0
@@ -4556,7 +4556,7 @@ MonoBehaviour:
       y: 8
       width: 1
       height: 1
-    RegionType: 1
+    Type: 1
     InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
     OutputUnitType: {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
     IsLocked: 1
@@ -4567,7 +4567,7 @@ MonoBehaviour:
       y: 8
       width: 1
       height: 1
-    RegionType: 1
+    Type: 1
     InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
     OutputUnitType: {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
     IsLocked: 1
@@ -4578,7 +4578,7 @@ MonoBehaviour:
       y: 1
       width: 3
       height: 8
-    RegionType: 0
+    Type: 0
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
     IsLocked: 0
@@ -4589,7 +4589,7 @@ MonoBehaviour:
       y: 1
       width: 3
       height: 8
-    RegionType: 0
+    Type: 0
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
     IsLocked: 0
@@ -4600,7 +4600,7 @@ MonoBehaviour:
       y: 7
       width: 2
       height: 2
-    RegionType: 2
+    Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
     IsLocked: 0
@@ -4611,7 +4611,7 @@ MonoBehaviour:
       y: 7
       width: 1
       height: 2
-    RegionType: 2
+    Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
     IsLocked: 0
@@ -4622,7 +4622,7 @@ MonoBehaviour:
       y: 1
       width: 1
       height: 2
-    RegionType: 2
+    Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
     IsLocked: 0
@@ -4633,7 +4633,7 @@ MonoBehaviour:
       y: 1
       width: 2
       height: 2
-    RegionType: 2
+    Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
     IsLocked: 0
@@ -4641,7 +4641,7 @@ MonoBehaviour:
     Name: Default
     Team: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
     Area: []
-    RegionType: 0
+    Type: 0
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
     IsLocked: 0

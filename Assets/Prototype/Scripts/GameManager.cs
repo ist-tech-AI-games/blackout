@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
 
     private void PrepareMap()
     {
-        mapData = mapGenerator.Generate(this);
+        mapData = mapGenerator.Generate();
         foreach (var unit in units)
             unit.Initialize(this);
         foreach (var item in items)

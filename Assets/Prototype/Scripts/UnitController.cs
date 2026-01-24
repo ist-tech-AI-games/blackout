@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class UnitController : MonoBehaviour
 {
@@ -32,6 +33,10 @@ public class UnitController : MonoBehaviour
         HandleUnitSelection();
         HandleCancel();
         HandleMovement();
+        if (Keyboard.current[Key.R].wasPressedThisFrame)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     private void HandleUnitSelection()
