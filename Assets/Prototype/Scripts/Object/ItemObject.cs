@@ -22,11 +22,13 @@ public class ItemObject : MonoBehaviour, IMapObject
 
     private TeamContext currentAppliedContext;
     private GameManager gameManager;
+    private MapManager mapManager;
 
-    public void Initialize(GameManager gameManager)
+    public void Initialize(GameManager gameManager, MapManager mapManager)
     {
         this.gameManager = gameManager;
-        AddToMap(gameManager.WorldToTile(transform.position));
+        this.mapManager = mapManager;
+        AddToMap(mapManager.GetTileAtWorldPos(GlobalPos));
     }
 
     // === State Machine Transitions ===
@@ -47,7 +49,7 @@ public class ItemObject : MonoBehaviour, IMapObject
     {
         State = ItemState.OnGround;
         transform.SetParent(gameManager.GetItemParent());
-        transform.position = gameManager.CellToCenterWorld(targetTile.CellPos);
+        transform.position = mapManager.CellToCenterWorld(targetTile.CellPos);
 
         AddToMap(targetTile);
     }

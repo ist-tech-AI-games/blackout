@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamData
   TeamName: Team A
   TeamColor: {r: 0, g: 0.30839252, b: 1, a: 1}
+  <Opponent>k__BackingField: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}

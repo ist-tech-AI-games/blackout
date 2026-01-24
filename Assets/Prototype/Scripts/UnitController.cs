@@ -75,7 +75,7 @@ public class UnitController : MonoBehaviour
             return;
 
         if (selection >= 0 && selection < units.Length)
-            units[selection].Move(moveInput * Time.deltaTime);
+            units[selection].Move(moveInput);
         else
             MoveCamera(moveInput);
     }

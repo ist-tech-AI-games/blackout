@@ -4501,6 +4501,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2101514195}
   - component: {fileID: 2101514194}
+  - component: {fileID: 2101514198}
   - component: {fileID: 2101514193}
   - component: {fileID: 2101514196}
   - component: {fileID: 2101514197}
@@ -4659,12 +4660,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ebec3041919b6c4887311f46c7d540b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  mapGenerator: {fileID: 2101514193}
-  teamAreaViewer: {fileID: 2101514197}
+  mapManager: {fileID: 2101514198}
   teamA: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
   teamB: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
   neutralTeam: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
-  tilemap: {fileID: 976056231}
+  defaultUnitData: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
   units:
   - {fileID: 1245834323}
   - {fileID: 163372627}
@@ -4676,8 +4676,7 @@ MonoBehaviour:
   - {fileID: 298859768}
   - {fileID: 956836290}
   - {fileID: 591532094}
-  itemParent: {fileID: 0}
-  defaultUnitData: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
+  itemParent: {fileID: 786387406}
 --- !u!4 &2101514195
 Transform:
   m_ObjectHideFlags: 0
@@ -4729,6 +4728,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamAreaViewer
   tilemap: {fileID: 976056231}
+--- !u!114 &2101514198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101514192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05829f7d77668cb4984995b68d9898d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapManager
+  tilemap: {fileID: 976056231}
+  mapGenerator: {fileID: 2101514193}
+  teamAreaViewer: {fileID: 2101514197}
 --- !u!1001 &1968177648282763629
 PrefabInstance:
   m_ObjectHideFlags: 0
