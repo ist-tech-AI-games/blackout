@@ -38,7 +38,7 @@ public class ItemObject : MonoBehaviour, IMapObject
         if (State == ItemState.Carried)
             return;
 
-        RemoveEffect();
+        // RemoveEffect();
         RemoveFromMap();
 
         State = ItemState.Carried;
@@ -47,6 +47,7 @@ public class ItemObject : MonoBehaviour, IMapObject
 
     public void OnDropped(MapTile targetTile)
     {
+        RemoveEffect();
         State = ItemState.OnGround;
         transform.SetParent(gameManager.GetItemParent());
         transform.position = mapManager.CellToCenterWorld(targetTile.CellPos);
@@ -136,5 +137,10 @@ public class ItemObject : MonoBehaviour, IMapObject
             default: // None
                 return false;
         }
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(GlobalPos, ItemData.CollisionBound.Width / 2);
     }
 }

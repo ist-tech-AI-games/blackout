@@ -15,7 +15,7 @@ MonoBehaviour:
   <Sprite>k__BackingField: {fileID: 1308573079285066854, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
   <CollisionBound>k__BackingField:
     Type: 0
-    Width: 0.4
+    Width: 0.45
   <Speed>k__BackingField: 5
   <Collectable>k__BackingField: 1
   <Beats>k__BackingField:

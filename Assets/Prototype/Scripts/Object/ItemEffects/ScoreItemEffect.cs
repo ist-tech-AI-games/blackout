@@ -5,11 +5,11 @@ public class ScoreItemEffect : ItemEffect
 {
     public override void EnterEffect(TeamContext teamContext, int amount)
     {
-        teamContext.Score += amount;
+        teamContext.AddScore(amount);
     }
 
     public override void ExitEffect(TeamContext teamContext, int amount)
     {
-        teamContext.Score -= amount;
+        teamContext.AddScore(-amount);
     }
 }

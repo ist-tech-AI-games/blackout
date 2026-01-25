@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
             unit.Initialize(this, mapManager);
         foreach (var item in items)
             item.Initialize(this, mapManager);
+
+        GetTeamContext(neutralTeam).OnScoreChanged += CheckEndGame;
     }
 
     public void RespawnUnit(Unit unit)
@@ -57,4 +59,30 @@ public class GameManager : MonoBehaviour
     public TeamData OpponentTeam(TeamData team) => team.Opponent;
 
     public TeamContext GetTeamContext(TeamData team) => teamContextTable.GetValueOrDefault(team, null);
+
+    private void CheckEndGame(int remainingScore)
+    {
+        if (remainingScore <= 0) EndGame();
+    }
+
+    private void EndGame()
+    {
+        TeamData winner;
+
+        int scoreA = GetTeamContext(teamA).Score;
+        int scoreB = GetTeamContext(teamB).Score;
+
+        if (scoreA > scoreB)
+            winner = teamA;
+        else if (scoreA < scoreB)
+            winner = teamB;
+        else
+            winner = null;
+
+        // TODO
+        if (winner == null)
+            Debug.Log("Draw!");
+        else
+            Debug.Log($"{winner.TeamName} win!");
+    }
 }
