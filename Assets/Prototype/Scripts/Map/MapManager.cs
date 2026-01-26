@@ -23,7 +23,8 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     public CollisionBound GetTileCollisionBound(Vector2Int cellPos)
     {
         var tile = GetTile(cellPos);
-        return tile != null ? tile.TileData.CollisionBound : default;
+        return tile != null ? tile.TileData.CollisionBound 
+                            : new CollisionBound { Type = CollisionBoundType.Square, Width = 1 };
     }
 
     public bool IsWalkable(Vector2Int cellPos, TeamData team)

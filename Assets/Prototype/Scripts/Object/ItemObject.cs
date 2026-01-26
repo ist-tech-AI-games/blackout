@@ -31,6 +31,13 @@ public class ItemObject : MonoBehaviour, IMapObject
         AddToMap(mapManager.GetTileAtWorldPos(GlobalPos));
     }
 
+    // WARNING: USE IT ONLY BEFORE INITIALIZATION.
+    public void SetData(ItemData itemData, int amount)
+    {
+        ItemData = itemData;
+        ItemAmount = amount;
+    }
+
     // === State Machine Transitions ===
 
     public void OnPickedUp(Unit unit)

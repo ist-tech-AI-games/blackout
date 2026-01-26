@@ -14,7 +14,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Scene Objects")]
     [SerializeField] private Unit[] units;
-    [SerializeField] private ItemObject[] items;
+    [SerializeField] private List<ItemObject> items = new();
+    [SerializeField] private ItemObject itemPrefab;
     [SerializeField] private Transform itemParent;
 
     private Dictionary<TeamData, TeamContext> teamContextTable;
@@ -36,6 +37,14 @@ public class GameManager : MonoBehaviour
             item.Initialize(this, mapManager);
 
         GetTeamContext(neutralTeam).OnScoreChanged += CheckEndGame;
+    }
+
+    public void SpawnItem(ItemData itemData, int amount, Vector2Int cellPos)
+    {
+        ItemObject instance = Instantiate(itemPrefab, itemParent);
+        instance.transform.position = mapManager.CellToCenterWorld(cellPos);
+        instance.SetData(itemData, amount);
+        items.Add(instance);
     }
 
     public void RespawnUnit(Unit unit)
