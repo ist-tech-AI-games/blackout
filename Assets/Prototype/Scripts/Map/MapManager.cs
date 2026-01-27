@@ -6,15 +6,14 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
 {
     [Header("References")]
     [SerializeField] private Tilemap tilemap;
-    [SerializeField] private MapGenerator mapGenerator;
     [SerializeField] private TeamAreaViewer teamAreaViewer;
 
     private MapData mapData;
     public MapSpaceInfo MapSpaceInfo => mapData?.MapSpaceInfo;
 
-    public void Initialize()
+    public void Initialize(MapData mapData)
     {
-        mapData = mapGenerator.Generate();
+        this.mapData = mapData;
         teamAreaViewer?.ColorTiles(mapData);
     }
 

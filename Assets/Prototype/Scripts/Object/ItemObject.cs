@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
+using UnityEngine.Pool;
 
-public class ItemObject : MonoBehaviour, IMapObject
+public class ItemObject : MonoBehaviour, IMapObject, IResettable
 {
+    public event Action<ItemData, int> OnDataUpdated;
     public enum ItemState
     {
         OnGround,
@@ -23,12 +26,38 @@ public class ItemObject : MonoBehaviour, IMapObject
     private TeamContext currentAppliedContext;
     private GameManager gameManager;
     private MapManager mapManager;
+    private IObjectPool<ItemObject> managedPool;
+    private Transform worldParent;
 
-    public void Initialize(GameManager gameManager, MapManager mapManager)
+    public void Initialize(GameManager gameManager, MapManager mapManager, IObjectPool<ItemObject> managedPool, Transform worldParent)
     {
         this.gameManager = gameManager;
         this.mapManager = mapManager;
-        AddToMap(mapManager.GetTileAtWorldPos(GlobalPos));
+        this.managedPool = managedPool;
+        this.worldParent = worldParent;
+    }
+
+    public void ResetState()
+    {
+        State = ItemState.OnGround;
+        currentAppliedContext = null;
+        OwnedTile = null;
+        
+        gameObject.SetActive(true);
+    }
+
+    public void RegisterToMap(ItemData itemData, int amount, Vector2Int cellPos)
+    {
+        ItemData = itemData;
+        ItemAmount = amount;
+
+        transform.SetParent(worldParent);
+        transform.position = mapManager.CellToCenterWorld(cellPos);
+
+        MapTile tile = mapManager.GetTile(cellPos);
+        AddToMap(tile);
+
+        OnDataUpdated?.Invoke(ItemData, ItemAmount);
     }
 
     // WARNING: USE IT ONLY BEFORE INITIALIZATION.
@@ -56,7 +85,7 @@ public class ItemObject : MonoBehaviour, IMapObject
     {
         RemoveEffect();
         State = ItemState.OnGround;
-        transform.SetParent(gameManager.GetItemParent());
+        transform.SetParent(worldParent);
         transform.position = mapManager.CellToCenterWorld(targetTile.CellPos);
 
         AddToMap(targetTile);
@@ -66,7 +95,10 @@ public class ItemObject : MonoBehaviour, IMapObject
     {
         RemoveEffect();
         RemoveFromMap();
-        Destroy(gameObject);
+        if (managedPool != null)
+            managedPool.Release(this);
+        else
+            Destroy(gameObject);
     }
 
     // === Map Object ===
@@ -101,6 +133,7 @@ public class ItemObject : MonoBehaviour, IMapObject
             ItemData.Effect.EnterEffect(currentAppliedContext, newAmount);
         }
         ItemAmount = newAmount;
+        OnDataUpdated?.Invoke(ItemData, newAmount);
     }
 
     // === Effects ===

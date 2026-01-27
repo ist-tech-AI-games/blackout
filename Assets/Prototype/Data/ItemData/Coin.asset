@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 325aa1a78d97a6a40bf550da2fc41655, type: 3}
   m_Name: Coin
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  <Sprite>k__BackingField: {fileID: 584332810, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
+  defaultSprite: {fileID: 584332810, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
+  amountTiers: []
   <Effect>k__BackingField: {fileID: 11400000, guid: 55ff41d363c2d7042937fcfbd2c55a54, type: 2}
   <MaxItemAmount>k__BackingField: 10
   <CollisionBound>k__BackingField:

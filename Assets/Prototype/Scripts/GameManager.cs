@@ -14,9 +14,6 @@ public class GameManager : MonoBehaviour
 
     [Header("Scene Objects")]
     [SerializeField] private Unit[] units;
-    [SerializeField] private List<ItemObject> items = new();
-    [SerializeField] private ItemObject itemPrefab;
-    [SerializeField] private Transform itemParent;
 
     private Dictionary<TeamData, TeamContext> teamContextTable;
 
@@ -29,22 +26,26 @@ public class GameManager : MonoBehaviour
             {neutralTeam, new(neutralTeam)},
         };
 
-        mapManager.Initialize();
+        GetTeamContext(neutralTeam).OnScoreChanged += CheckEndGame;
 
         foreach (var unit in units)
             unit.Initialize(this, mapManager);
-        foreach (var item in items)
-            item.Initialize(this, mapManager);
-
-        GetTeamContext(neutralTeam).OnScoreChanged += CheckEndGame;
     }
 
-    public void SpawnItem(ItemData itemData, int amount, Vector2Int cellPos)
+    public void ResetAllUnits(MapData mapData)
     {
-        ItemObject instance = Instantiate(itemPrefab, itemParent);
-        instance.transform.position = mapManager.CellToCenterWorld(cellPos);
-        instance.SetData(itemData, amount);
-        items.Add(instance);
+        foreach (var unit in units)
+        {
+            unit.ResetState();
+
+            // 위치 이동
+            if (unit.Team == teamA)
+                unit.Teleport(mapData.MapSpaceInfo.TeamASpawnPoint);
+            else if (unit.Team == teamB)
+                unit.Teleport(mapData.MapSpaceInfo.TeamBSpawnPoint);
+            
+            unit.SetUnitClass(defaultUnitData);
+        }
     }
 
     public void RespawnUnit(Unit unit)
@@ -62,8 +63,6 @@ public class GameManager : MonoBehaviour
 
         unit.SetUnitClass(defaultUnitData);
     }
-
-    public Transform GetItemParent() => itemParent;
 
     public TeamData OpponentTeam(TeamData team) => team.Opponent;
 

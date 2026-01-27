@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 
 public class ProceduralMapGenerator : MapGenerator
 {
@@ -64,7 +65,7 @@ public class ProceduralMapGenerator : MapGenerator
 
     private Dictionary<TileBase, MapTileData> tileDataLookup;
 
-    public override MapData Generate()
+    public override MapData GenerateMapData()
     {
         tileDataLookup = new Dictionary<TileBase, MapTileData>();
         foreach (var data in mapTileData)
@@ -83,8 +84,6 @@ public class ProceduralMapGenerator : MapGenerator
 
         FillDefaultRegion(mapRegions, mapTiles);
 
-        SpawnItems(mapTiles);
-
         MapSpaceInfo spaceInfo = new MapSpaceInfo(
             levelMap,
             mapArea.min,
@@ -92,6 +91,58 @@ public class ProceduralMapGenerator : MapGenerator
             teamBSpawnPoint
         );
         return new MapData(mapTiles, mapRegions.ToArray(), spaceInfo);
+    }
+
+    public override void SpawnItemObjects(MapManager mapManager, SpawnItemCallback spawnItemCallback)
+    {
+        List<Vector2Int> validPositions = new List<Vector2Int>();
+        for (int i = 0; i < mapArea.height; i++)
+        {
+            for (int j = 0; j < mapArea.width; j++)
+            {
+                MapTile mapTile = mapManager.GetTile(new(j, i));
+                if (
+                    mapTile.OwnedRegion.OwnedTeam != teamA
+                    && mapTile.OwnedRegion.OwnedTeam != teamB
+                    && mapTile.TileData == itemTileFilter
+                )
+                {
+                    validPositions.Add(new Vector2Int(j, i));
+                }
+            }
+        }
+
+        int currentScore = 0;
+
+        while (currentScore < targetTotalScore && validPositions.Count > 0)
+        {
+            int idx = Random.Range(0, validPositions.Count);
+            Vector2Int posA = validPositions[idx];
+            validPositions.RemoveAt(idx);
+
+            // TODO: refactor
+            int amount = Random.Range(1, 6);
+
+            // TODO: extend to use other item types
+            ItemData data = itemTypes[0];
+
+            // 생성 A
+            spawnItemCallback(data, amount, posA);
+            currentScore += amount;
+
+            if (symmetricItems)
+            {
+                Vector2Int posB = new(posA.y, posA.x);
+
+                // TODO: check if valid
+                if (posA != posB)
+                {
+                    spawnItemCallback(data, amount, posB);
+                    currentScore += amount;
+                    validPositions.Remove(posB);
+                }
+            }
+        }
     }
 
     private void GenerateProceduralWarehouses(List<MapRegion> regions, MapTile[,] mapTiles)
@@ -170,64 +221,6 @@ public class ProceduralMapGenerator : MapGenerator
                 }
             }
         }
-    }
-
-    private void SpawnItems(MapTile[,] mapTiles)
-    {
-        List<Vector2Int> validPositions = new List<Vector2Int>();
-        for (int i = 0; i < mapArea.height; i++)
-        {
-            for (int j = 0; j < mapArea.width; j++)
-            {
-                if (
-                    mapTiles[i, j].OwnedRegion.OwnedTeam != teamA
-                    && mapTiles[i, j].OwnedRegion.OwnedTeam != teamB
-                    && mapTiles[i, j].TileData == itemTileFilter
-                )
-                {
-                    validPositions.Add(new Vector2Int(j, i));
-                }
-            }
-        }
-
-        int currentScore = 0;
-        // TODO: refactor this dependency
-        var gm = FindObjectOfType<GameManager>();
-
-        while (currentScore < targetTotalScore && validPositions.Count > 0)
-        {
-            int idx = Random.Range(0, validPositions.Count);
-            Vector2Int posA = validPositions[idx];
-            validPositions.RemoveAt(idx);
-
-            // TODO: refactor
-            int amount = Random.Range(1, 6);
-
-            // TODO: extend to use other item types
-            ItemData data = itemTypes[0];
-
-            // 생성 A
-            SpawnItemAt(gm, data, amount, posA);
-            currentScore += amount;
-
-            if (symmetricItems)
-            {
-                Vector2Int posB = new (posA.y, posA.x);
-
-                // TODO: check if valid
-                if (posA != posB)
-                {
-                    SpawnItemAt(gm, data, amount, posB);
-                    currentScore += amount;
-                    validPositions.Remove(posB);
-                }
-            }
-        }
-    }
-
-    private void SpawnItemAt(GameManager gm, ItemData data, int amount, Vector2Int cellPos)
-    {
-        gm.SpawnItem(data, amount, cellPos);
     }
 
     private MapTileData GetTileDataFromMap(Vector2Int pos)

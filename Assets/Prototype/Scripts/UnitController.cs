@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
+// using UnityEngine.SceneManagement;
 
 public class UnitController : MonoBehaviour
 {
+    [Header("Managers")]
+    [SerializeField] private LevelDirector levelDirector;
+
     [Header("Units")]
     [SerializeField] private Unit[] units;
     private int selection = -1;
@@ -35,7 +38,8 @@ public class UnitController : MonoBehaviour
         HandleMovement();
         if (Keyboard.current[Key.R].wasPressedThisFrame)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            levelDirector?.EndEpisode();
         }
     }
 

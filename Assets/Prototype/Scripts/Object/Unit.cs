@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Unit : MonoBehaviour, IMapObject
+public class Unit : MonoBehaviour, IMapObject, IResettable
 {
     // Events
     public event Action<UnitData> OnClassChanged;
@@ -31,9 +31,18 @@ public class Unit : MonoBehaviour, IMapObject
         this.mapManager = mapManager;
         unitMovementSystem = new(mapManager, UnitData, Team);
         unitInteractionSystem = new(mapManager, this);
-        
-        OwnedTile = mapManager.GetTileAtWorldPos(transform.position);
-        OwnedTile.OnObjectEnter(this);
+    }
+
+    public void ResetState()
+    {
+        if (HoldingItem != null)
+        {
+            HoldingItem.OnDestroyed();
+            HoldingItem = null;
+        }
+
+        gameObject.SetActive(true);
+        OwnedTile = null;
     }
 
     /// <summary>
@@ -95,7 +104,7 @@ public class Unit : MonoBehaviour, IMapObject
 
         if (currentTile != null && OwnedTile != currentTile)
         {
-            OwnedTile.OnObjectExit(this);
+            OwnedTile?.OnObjectExit(this);
             currentTile.OnObjectEnter(this);
 
             MapRegion prevRegion = OwnedTile?.OwnedRegion;
