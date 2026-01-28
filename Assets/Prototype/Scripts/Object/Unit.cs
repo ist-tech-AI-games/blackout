@@ -122,7 +122,6 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
 
     public void OnOverlapped(IMapObject other)
     {
-        Debug.Log($"Overlap: {this}, {other}");
         if (other is ItemObject item)
         {
             if (UnitData.Collectable && HoldingItem == null && item.IsInteractable(Team))

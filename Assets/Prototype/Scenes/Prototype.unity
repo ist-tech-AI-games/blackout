@@ -13746,9 +13746,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   mapManager: {fileID: 2101514198}
-  teamA: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-  teamB: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
-  neutralTeam: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
+  <TeamA>k__BackingField: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+  <TeamB>k__BackingField: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+  <NeutralTeam>k__BackingField: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
   defaultUnitData: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
   units:
   - {fileID: 1245834323}

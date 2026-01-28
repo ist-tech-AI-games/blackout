@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -11,7 +12,6 @@ public class LevelDirector : MonoBehaviour
     [SerializeField]
     private MapManager mapManager;
 
-    // 이거 abstract 단계로 옮길까..?
     [SerializeField]
     private MapGenerator mapGenerator;
 
@@ -30,7 +30,8 @@ public class LevelDirector : MonoBehaviour
 
     // Object Pool
     private IObjectPool<ItemObject> itemPool;
-    private List<ItemObject> activeItems = new List<ItemObject>();
+    private HashSet<ItemObject> activeItems = new();
+    private bool restartPending = false;
 
     void Awake()
     {
@@ -54,25 +55,79 @@ public class LevelDirector : MonoBehaviour
         StartEpisode();
     }
 
+    private void LateUpdate()
+    {
+        if (restartPending)
+        {
+            PerformReset();
+            restartPending = false;
+        }
+    }
+
     // === Episode Lifecycle ===
 
     public void StartEpisode()
     {
+        PerformReset();
+    }
+
+    private void PerformReset()
+    {
+        var activeList = activeItems.ToList();
+        for (int i = activeList.Count - 1; i >= 0; i--)
+        {
+            activeList[i].OnDestroyed();
+        }
+        activeItems.Clear();
+
         MapData mapData = mapGenerator.GenerateMapData();
         mapManager.Initialize(mapData);
+        Debug.Log($"Starting episode; pool: {itemPool.CountInactive}, active: {activeItems.Count}");
         mapGenerator.SpawnItemObjects(mapManager, SpawnItem);
+        Debug.Log($"Item generated; pool: {itemPool.CountInactive}, active: {activeItems.Count}");
+
         gameManager.ResetAllUnits(mapData);
+        gameManager.GetTeamContext(gameManager.NeutralTeam).OnScoreChanged += CheckGameEnd;
     }
 
     public void EndEpisode()
     {
-        for (int i = activeItems.Count - 1; i >= 0; i--)
-        {
-            activeItems[i].OnDestroyed();
-        }
-        activeItems.Clear();
+        var neutralContext = gameManager.GetTeamContext(gameManager.NeutralTeam);
+        neutralContext.OnScoreChanged -= CheckGameEnd;
 
-        StartEpisode();
+        restartPending = true;
+    }
+
+    // === Event Handlers ===
+    private void CheckGameEnd(int score)
+    {
+        if (score <= 0)
+        {
+            EndGame();
+        }
+    }
+
+    private void EndGame()
+    {
+        TeamData winner;
+
+        int scoreA = gameManager.GetTeamContext(gameManager.TeamA).Score;
+        int scoreB = gameManager.GetTeamContext(gameManager.TeamB).Score;
+
+        if (scoreA > scoreB)
+            winner = gameManager.TeamA;
+        else if (scoreA < scoreB)
+            winner = gameManager.TeamB;
+        else
+            winner = null;
+
+        // TODO
+        if (winner == null)
+            Debug.Log("Draw!");
+        else
+            Debug.Log($"{winner.TeamName} win!");
+
+        EndEpisode();
     }
 
     // === Item Spawning (Public Interface) ===

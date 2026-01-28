@@ -7,9 +7,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MapManager mapManager;
 
     [Header("Data")]
-    [SerializeField] private TeamData teamA;
-    [SerializeField] private TeamData teamB;
-    [SerializeField] private TeamData neutralTeam;
+    [field: SerializeField] public TeamData TeamA { get; private set; }
+    [field: SerializeField] public TeamData TeamB { get; private set; }
+    [field: SerializeField] public TeamData NeutralTeam { get; private set; }
     [SerializeField] private UnitData defaultUnitData;
 
     [Header("Scene Objects")]
@@ -21,12 +21,10 @@ public class GameManager : MonoBehaviour
     {
         teamContextTable = new()
         {
-            {teamA, new(teamA)},
-            {teamB, new(teamB)},
-            {neutralTeam, new(neutralTeam)},
+            {TeamA, new(TeamA)},
+            {TeamB, new(TeamB)},
+            {NeutralTeam, new(NeutralTeam)},
         };
-
-        GetTeamContext(neutralTeam).OnScoreChanged += CheckEndGame;
 
         foreach (var unit in units)
             unit.Initialize(this, mapManager);
@@ -39,9 +37,9 @@ public class GameManager : MonoBehaviour
             unit.ResetState();
 
             // 위치 이동
-            if (unit.Team == teamA)
+            if (unit.Team == TeamA)
                 unit.Teleport(mapData.MapSpaceInfo.TeamASpawnPoint);
-            else if (unit.Team == teamB)
+            else if (unit.Team == TeamB)
                 unit.Teleport(mapData.MapSpaceInfo.TeamBSpawnPoint);
             
             unit.SetUnitClass(defaultUnitData);
@@ -51,9 +49,9 @@ public class GameManager : MonoBehaviour
     public void RespawnUnit(Unit unit)
     {
         var spaceInfo = mapManager.MapSpaceInfo;
-        if (unit.Team == teamA)
+        if (unit.Team == TeamA)
             unit.Teleport(spaceInfo.TeamASpawnPoint);
-        else if (unit.Team == teamB)
+        else if (unit.Team == TeamB)
             unit.Teleport(spaceInfo.TeamBSpawnPoint);
         else
         {
@@ -67,30 +65,4 @@ public class GameManager : MonoBehaviour
     public TeamData OpponentTeam(TeamData team) => team.Opponent;
 
     public TeamContext GetTeamContext(TeamData team) => teamContextTable.GetValueOrDefault(team, null);
-
-    private void CheckEndGame(int remainingScore)
-    {
-        if (remainingScore <= 0) EndGame();
-    }
-
-    private void EndGame()
-    {
-        TeamData winner;
-
-        int scoreA = GetTeamContext(teamA).Score;
-        int scoreB = GetTeamContext(teamB).Score;
-
-        if (scoreA > scoreB)
-            winner = teamA;
-        else if (scoreA < scoreB)
-            winner = teamB;
-        else
-            winner = null;
-
-        // TODO
-        if (winner == null)
-            Debug.Log("Draw!");
-        else
-            Debug.Log($"{winner.TeamName} win!");
-    }
 }
