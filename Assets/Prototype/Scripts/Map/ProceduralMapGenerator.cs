@@ -134,8 +134,7 @@ public class ProceduralMapGenerator : MapGenerator
             {
                 Vector2Int posB = new(posA.y, posA.x);
 
-                // TODO: check if valid
-                if (posA != posB)
+                if (posA != posB && validPositions.Contains(posB)) 
                 {
                     spawnItemCallback(data, amount, posB);
                     currentScore += amount;

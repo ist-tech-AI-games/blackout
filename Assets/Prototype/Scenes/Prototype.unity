@@ -269,8 +269,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ebd6348c5b54d74780625852cd16113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamScoreView
-  gameManager: {fileID: 2101514194}
-  teamData: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
   scoreText: {fileID: 30784673}
   placeholder: '{0}'
 --- !u!1 &91138788
@@ -662,8 +660,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ebd6348c5b54d74780625852cd16113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamScoreView
-  gameManager: {fileID: 2101514194}
-  teamData: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
   scoreText: {fileID: 441094432}
   placeholder: '{0}'
 --- !u!1001 &513786676
@@ -13176,6 +13172,7 @@ GameObject:
   - component: {fileID: 1460599319}
   - component: {fileID: 1460599318}
   - component: {fileID: 1460599317}
+  - component: {fileID: 1460599321}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -13266,6 +13263,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1460599321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460599316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b07d94c95d362b4293a0899d28a18c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  levelDirector: {fileID: 2101514200}
+  teamAScore: {fileID: 30784675}
+  teamBScore: {fileID: 441094434}
+  neutralScore: {fileID: 1467158490}
 --- !u!1 &1467158486
 GameObject:
   m_ObjectHideFlags: 0
@@ -13416,8 +13429,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ebd6348c5b54d74780625852cd16113, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamScoreView
-  gameManager: {fileID: 2101514194}
-  teamData: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
   scoreText: {fileID: 1467158488}
   placeholder: '{0}'
 --- !u!1 &1775625595

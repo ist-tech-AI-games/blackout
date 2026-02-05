@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,6 +6,8 @@ using UnityEngine.Pool;
 
 public class LevelDirector : MonoBehaviour
 {
+    public event Action<GameManager> OnLevelInitialized;
+
     [Header("Core Systems")]
     [SerializeField]
     private GameManager gameManager;
@@ -88,6 +91,8 @@ public class LevelDirector : MonoBehaviour
 
         gameManager.ResetAllUnits(mapData);
         gameManager.GetTeamContext(gameManager.NeutralTeam).OnScoreChanged += CheckGameEnd;
+
+        OnLevelInitialized?.Invoke(gameManager);
     }
 
     public void EndEpisode()
