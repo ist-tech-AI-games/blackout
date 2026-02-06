@@ -6,15 +6,19 @@ using UnityEngine.Pool;
 
 public class LevelDirector : MonoBehaviour
 {
-    public event Action<GameManager> OnLevelInitialized;
+    public event Action<MatchManager> OnLevelInitialized;
 
     [Header("Core Systems")]
     [SerializeField]
-    private GameManager gameManager;
+    private MatchManager matchManager;
 
     [SerializeField]
     private MapManager mapManager;
 
+    [SerializeField]
+    private UIManager uIManager;  // Logic에서 View를 참조하는 좋지 않은 방식이지만, 초기화 중앙화를 위한 설계.
+
+    [Header("Generation")]
     [SerializeField]
     private MapGenerator mapGenerator;
 
@@ -31,13 +35,17 @@ public class LevelDirector : MonoBehaviour
     [SerializeField]
     private int maxPoolSize = 150;
 
+    private GameEventBus eventBus;
+
     // Object Pool
     private IObjectPool<ItemObject> itemPool;
     private HashSet<ItemObject> activeItems = new();
-    private bool restartPending = false;
+    private bool isGamePlaying = false;
 
-    void Awake()
+    public void Initialize(GameScenario gameScenario)
     {
+        eventBus = gameScenario.EventBus;
+
         itemPool = new ObjectPool<ItemObject>(
             createFunc: CreateItem,
             actionOnGet: OnGetItem,
@@ -51,28 +59,23 @@ public class LevelDirector : MonoBehaviour
             defaultCapacity: initialPoolSize,
             maxSize: maxPoolSize
         );
-    }
 
-    void Start()
-    {
-        StartEpisode();
-    }
-
-    private void LateUpdate()
-    {
-        if (restartPending)
-        {
-            PerformReset();
-            restartPending = false;
-        }
+        eventBus.Flow.OnGameEnded += (winner) => EndEpisode();
+        eventBus.World.OnAbsorptionInterval += OnAbsorption;
     }
 
     // === Episode Lifecycle ===
-
     public void StartEpisode()
     {
         PerformReset();
     }
+
+    public void EndEpisode()
+    {
+        if (isGamePlaying)
+            isGamePlaying = false;
+    }
+
 
     private void PerformReset()
     {
@@ -85,54 +88,33 @@ public class LevelDirector : MonoBehaviour
 
         MapData mapData = mapGenerator.GenerateMapData();
         mapManager.Initialize(mapData);
-        Debug.Log($"Starting episode; pool: {itemPool.CountInactive}, active: {activeItems.Count}");
+
+        matchManager.ResetAllUnits(mapData);
         mapGenerator.SpawnItemObjects(mapManager, SpawnItem);
-        Debug.Log($"Item generated; pool: {itemPool.CountInactive}, active: {activeItems.Count}");
 
-        gameManager.ResetAllUnits(mapData);
-        gameManager.GetTeamContext(gameManager.NeutralTeam).OnScoreChanged += CheckGameEnd;
+        OnLevelInitialized?.Invoke(matchManager);
+        uIManager.Initialize(matchManager);
 
-        OnLevelInitialized?.Invoke(gameManager);
-    }
-
-    public void EndEpisode()
-    {
-        var neutralContext = gameManager.GetTeamContext(gameManager.NeutralTeam);
-        neutralContext.OnScoreChanged -= CheckGameEnd;
-
-        restartPending = true;
+        isGamePlaying = true;
     }
 
     // === Event Handlers ===
-    private void CheckGameEnd(int score)
+
+    private void OnAbsorption()
     {
-        if (score <= 0)
+        Debug.Log("Absorption(is Game playing?)");
+        if (!isGamePlaying) return;
+        Debug.Log("Absorption");
+
+        var snapshot = new List<ItemObject>(activeItems);
+        
+        foreach (var item in snapshot)
         {
-            EndGame();
+            if (item.OwnedTile != null && item.OwnedTile.OwnedRegion is Storage)
+            {
+                item.OnAbsorbed();
+            }
         }
-    }
-
-    private void EndGame()
-    {
-        TeamData winner;
-
-        int scoreA = gameManager.GetTeamContext(gameManager.TeamA).Score;
-        int scoreB = gameManager.GetTeamContext(gameManager.TeamB).Score;
-
-        if (scoreA > scoreB)
-            winner = gameManager.TeamA;
-        else if (scoreA < scoreB)
-            winner = gameManager.TeamB;
-        else
-            winner = null;
-
-        // TODO
-        if (winner == null)
-            Debug.Log("Draw!");
-        else
-            Debug.Log($"{winner.TeamName} win!");
-
-        EndEpisode();
     }
 
     // === Item Spawning (Public Interface) ===
@@ -150,7 +132,7 @@ public class LevelDirector : MonoBehaviour
     private ItemObject CreateItem()
     {
         ItemObject item = Instantiate(itemPrefab, itemParent);
-        item.Initialize(gameManager, mapManager, itemPool, itemParent);
+        item.Initialize(matchManager, mapManager, itemPool, itemParent);
         return item;
     }
 

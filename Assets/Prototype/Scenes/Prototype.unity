@@ -271,6 +271,236 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamScoreView
   scoreText: {fileID: 30784673}
   placeholder: '{0}'
+--- !u!1 &39173973
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 39173975}
+  - component: {fileID: 39173974}
+  - component: {fileID: 39173976}
+  m_Layer: 0
+  m_Name: Map
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &39173974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39173973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05829f7d77668cb4984995b68d9898d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapManager
+  tilemap: {fileID: 976056231}
+  teamAreaViewer: {fileID: 1702558274}
+--- !u!4 &39173975
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39173973}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2101514195}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &39173976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39173973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a7de8d6cec243241bafe96335cc973f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProceduralMapGenerator
+  levelMap: {fileID: 976056231}
+  mapArea:
+    x: 0
+    y: 0
+    width: 24
+    height: 24
+  mapTileData:
+  - {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
+  - {fileID: 11400000, guid: ba8f7d9b552ccb547bee90d130f0183c, type: 2}
+  - {fileID: 11400000, guid: 98d4890824fd5794b9dda2c23947a38e, type: 2}
+  - {fileID: 11400000, guid: 168bad32d18db8545b87126119c85a01, type: 2}
+  - {fileID: 11400000, guid: 4c880f508bb348c4d83f8c6f38ae0575, type: 2}
+  - {fileID: 11400000, guid: c9bf3be294e4ff1419f354572b6509c1, type: 2}
+  defaultTileData: {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
+  storageTileData: {fileID: 11400000, guid: c9bf3be294e4ff1419f354572b6509c1, type: 2}
+  teamA: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+  teamB: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+  teamASpawnPoint: {x: 1, y: 22}
+  teamBSpawnPoint: {x: 22, y: 1}
+  fixedRegions:
+  - Name: Hunter Sanctuary
+    Team: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
+    Area:
+    - x: 11
+      y: 11
+      width: 2
+      height: 2
+    Type: 1
+    InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
+    OutputUnitType: {fileID: 11400000, guid: f9863980f99768043b410dd37e66ccdd, type: 2}
+    IsLocked: 0
+  - Name: Carrier Sanctuary A
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 1
+      y: 20
+      width: 1
+      height: 1
+    Type: 1
+    InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
+    OutputUnitType: {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
+    IsLocked: 1
+  - Name: Carrier Sanctuary B
+    Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    Area:
+    - x: 20
+      y: 1
+      width: 1
+      height: 1
+    Type: 1
+    InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
+    OutputUnitType: {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
+    IsLocked: 1
+  - Name: Storage A1
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 3
+      y: 21
+      width: 1
+      height: 2
+    Type: 2
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  - Name: Storage B1
+    Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    Area:
+    - x: 21
+      y: 3
+      width: 2
+      height: 1
+    Type: 2
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  - Name: Team A Base
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 1
+      y: 19
+      width: 4
+      height: 4
+    Type: 0
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  - Name: Team B Base
+    Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    Area:
+    - x: 19
+      y: 1
+      width: 4
+      height: 4
+    Type: 0
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  defaultRegion:
+    Name: Default
+    Team: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
+    Area: []
+    Type: 0
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  storageCountPerTeam: 3
+  storageCandidatesA:
+  - Name: Storage_A2
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 9
+      y: 21
+      width: 2
+      height: 2
+    Type: 2
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  - Name: Storage_A3
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 13
+      y: 21
+      width: 2
+      height: 2
+    Type: 2
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  - Name: Storage_A4
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 17
+      y: 21
+      width: 2
+      height: 2
+    Type: 2
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  - Name: Storage_A5
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 8
+      y: 13
+      width: 1
+      height: 3
+    - x: 8
+      y: 15
+      width: 3
+      height: 1
+    Type: 2
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  - Name: Storage_A6
+    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+    Area:
+    - x: 9
+      y: 1
+      width: 5
+      height: 1
+    Type: 2
+    InputUnitType: {fileID: 0}
+    OutputUnitType: {fileID: 0}
+    IsLocked: 0
+  itemTileFilter: {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
+  itemTypes:
+  - {fileID: 11400000, guid: 23c7f56fb5cdc624882b96a622870993, type: 2}
+  targetTotalScore: 250
+  symmetricItems: 0
 --- !u!1 &91138788
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +626,88 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &115036435
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 115036436}
+  - component: {fileID: 115036438}
+  - component: {fileID: 115036437}
+  m_Layer: 0
+  m_Name: Systems
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &115036436
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115036435}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2101514195}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &115036437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115036435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0673a25360dec0d49911ddf3ad439545, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDirector
+  matchManager: {fileID: 115036438}
+  mapManager: {fileID: 39173974}
+  uIManager: {fileID: 1460599321}
+  mapGenerator: {fileID: 39173976}
+  itemPrefab: {fileID: 1107078259204203219, guid: 49ffdf38c82c0314ea9a8032329915a8, type: 3}
+  itemParent: {fileID: 606146320}
+  initialPoolSize: 30
+  maxPoolSize: 150
+--- !u!114 &115036438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115036435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ebec3041919b6c4887311f46c7d540b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  mapManager: {fileID: 39173974}
+  <TeamA>k__BackingField: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+  <TeamB>k__BackingField: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+  <NeutralTeam>k__BackingField: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
+  targetScore: 100
+  defaultUnitData: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
+  units:
+  - {fileID: 1245834323}
+  - {fileID: 978560093}
+  - {fileID: 1097950228}
+  - {fileID: 1439497209}
+  - {fileID: 171235709}
+  - {fileID: 1783771496}
+  - {fileID: 1103801458}
+  - {fileID: 1954899040}
+  - {fileID: 513786678}
+  - {fileID: 818114059}
 --- !u!1001 &171235707
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6793,6 +7105,69 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_ActionId: 15cef263-9014-4fd5-94d9-4e4a6234a6ef
+--- !u!1 &743038170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 743038173}
+  - component: {fileID: 743038172}
+  - component: {fileID: 743038171}
+  m_Layer: 0
+  m_Name: Controls
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &743038171
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743038170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38f7d5428eb06094cb73e113d9f55e29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameBootstrapper
+  scenario: {fileID: 2101514196}
+  playerController: {fileID: 743038172}
+--- !u!114 &743038172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743038170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24213d1d405ed454d9cf25f50a6035e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitController
+  moveAction: {fileID: 813448135}
+  cancelAction: {fileID: 700512702}
+  virtualCamera: {fileID: 1775625598}
+  cameraMoveSpeed: 5
+--- !u!4 &743038173
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 743038170}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &786387405
 GameObject:
   m_ObjectHideFlags: 0
@@ -13275,7 +13650,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b07d94c95d362b4293a0899d28a18c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  levelDirector: {fileID: 2101514200}
   teamAScore: {fileID: 30784675}
   teamBScore: {fileID: 441094434}
   neutralScore: {fileID: 1467158490}
@@ -13431,6 +13805,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TeamScoreView
   scoreText: {fileID: 1467158488}
   placeholder: '{0}'
+--- !u!1 &1702558273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1702558275}
+  - component: {fileID: 1702558274}
+  m_Layer: 0
+  m_Name: Views
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1702558274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702558273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed50b30409b40ad4aa5a915499734ff6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TeamAreaViewer
+  tilemap: {fileID: 976056231}
+--- !u!4 &1702558275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702558273}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2101514195}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1775625595
 GameObject:
   m_ObjectHideFlags: 0
@@ -13731,47 +14150,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2101514195}
-  - component: {fileID: 2101514194}
-  - component: {fileID: 2101514198}
-  - component: {fileID: 2101514200}
-  - component: {fileID: 2101514199}
   - component: {fileID: 2101514196}
-  - component: {fileID: 2101514197}
   m_Layer: 0
-  m_Name: Manager
+  m_Name: Managers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2101514194
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101514192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ebec3041919b6c4887311f46c7d540b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  mapManager: {fileID: 2101514198}
-  <TeamA>k__BackingField: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-  <TeamB>k__BackingField: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
-  <NeutralTeam>k__BackingField: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
-  defaultUnitData: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
-  units:
-  - {fileID: 1245834323}
-  - {fileID: 978560093}
-  - {fileID: 1097950228}
-  - {fileID: 1439497209}
-  - {fileID: 171235709}
-  - {fileID: 1783771496}
-  - {fileID: 1103801458}
-  - {fileID: 1954899040}
-  - {fileID: 513786678}
-  - {fileID: 818114059}
 --- !u!4 &2101514195
 Transform:
   m_ObjectHideFlags: 0
@@ -13784,7 +14170,10 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 39173975}
+  - {fileID: 115036436}
+  - {fileID: 1702558275}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2101514196
@@ -13796,254 +14185,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2101514192}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24213d1d405ed454d9cf25f50a6035e5, type: 3}
+  m_Script: {fileID: 11500000, guid: 7e3238c07cd8d1a438e5372bd9ed8ed7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UnitController
-  levelDirector: {fileID: 2101514200}
-  units:
-  - {fileID: 1245834323}
-  - {fileID: 978560093}
-  - {fileID: 1097950228}
-  - {fileID: 1439497209}
-  - {fileID: 171235709}
-  - {fileID: 1783771496}
-  - {fileID: 1103801458}
-  - {fileID: 1954899040}
-  - {fileID: 513786678}
-  - {fileID: 818114059}
-  moveAction: {fileID: 813448135}
-  cancelAction: {fileID: 700512702}
-  virtualCamera: {fileID: 1775625598}
-  cameraMoveSpeed: 5
---- !u!114 &2101514197
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101514192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed50b30409b40ad4aa5a915499734ff6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TeamAreaViewer
-  tilemap: {fileID: 976056231}
---- !u!114 &2101514198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101514192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05829f7d77668cb4984995b68d9898d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MapManager
-  tilemap: {fileID: 976056231}
-  teamAreaViewer: {fileID: 2101514197}
---- !u!114 &2101514199
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101514192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a7de8d6cec243241bafe96335cc973f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProceduralMapGenerator
-  levelMap: {fileID: 976056231}
-  mapArea:
-    x: 0
-    y: 0
-    width: 24
-    height: 24
-  mapTileData:
-  - {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
-  - {fileID: 11400000, guid: ba8f7d9b552ccb547bee90d130f0183c, type: 2}
-  - {fileID: 11400000, guid: 98d4890824fd5794b9dda2c23947a38e, type: 2}
-  - {fileID: 11400000, guid: 168bad32d18db8545b87126119c85a01, type: 2}
-  - {fileID: 11400000, guid: 4c880f508bb348c4d83f8c6f38ae0575, type: 2}
-  - {fileID: 11400000, guid: c9bf3be294e4ff1419f354572b6509c1, type: 2}
-  defaultTileData: {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
-  storageTileData: {fileID: 11400000, guid: c9bf3be294e4ff1419f354572b6509c1, type: 2}
-  teamA: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-  teamB: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
-  teamASpawnPoint: {x: 1, y: 22}
-  teamBSpawnPoint: {x: 22, y: 1}
-  fixedRegions:
-  - Name: Hunter Sanctuary
-    Team: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
-    Area:
-    - x: 11
-      y: 11
-      width: 2
-      height: 2
-    Type: 1
-    InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
-    OutputUnitType: {fileID: 11400000, guid: f9863980f99768043b410dd37e66ccdd, type: 2}
-    IsLocked: 0
-  - Name: Carrier Sanctuary A
-    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-    Area:
-    - x: 1
-      y: 20
-      width: 1
-      height: 1
-    Type: 1
-    InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
-    OutputUnitType: {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
-    IsLocked: 1
-  - Name: Carrier Sanctuary B
-    Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
-    Area:
-    - x: 20
-      y: 1
-      width: 1
-      height: 1
-    Type: 1
-    InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
-    OutputUnitType: {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
-    IsLocked: 1
-  - Name: Storage A1
-    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-    Area:
-    - x: 3
-      y: 21
-      width: 1
-      height: 2
-    Type: 2
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  - Name: Storage B1
-    Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
-    Area:
-    - x: 21
-      y: 3
-      width: 2
-      height: 1
-    Type: 2
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  - Name: Team A Base
-    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-    Area:
-    - x: 1
-      y: 19
-      width: 4
-      height: 4
-    Type: 0
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  - Name: Team B Base
-    Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
-    Area:
-    - x: 19
-      y: 1
-      width: 4
-      height: 4
-    Type: 0
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  defaultRegion:
-    Name: Default
-    Team: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
-    Area: []
-    Type: 0
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  storageCountPerTeam: 3
-  storageCandidatesA:
-  - Name: Storage_A2
-    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-    Area:
-    - x: 9
-      y: 21
-      width: 2
-      height: 2
-    Type: 2
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  - Name: Storage_A3
-    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-    Area:
-    - x: 13
-      y: 21
-      width: 2
-      height: 2
-    Type: 2
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  - Name: Storage_A4
-    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-    Area:
-    - x: 17
-      y: 21
-      width: 2
-      height: 2
-    Type: 2
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  - Name: Storage_A5
-    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-    Area:
-    - x: 8
-      y: 13
-      width: 1
-      height: 3
-    - x: 8
-      y: 15
-      width: 3
-      height: 1
-    Type: 2
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  - Name: Storage_A6
-    Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
-    Area:
-    - x: 9
-      y: 1
-      width: 5
-      height: 1
-    Type: 2
-    InputUnitType: {fileID: 0}
-    OutputUnitType: {fileID: 0}
-    IsLocked: 0
-  itemTileFilter: {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
-  itemTypes:
-  - {fileID: 11400000, guid: 23c7f56fb5cdc624882b96a622870993, type: 2}
-  targetTotalScore: 250
-  symmetricItems: 0
---- !u!114 &2101514200
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2101514192}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0673a25360dec0d49911ddf3ad439545, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelDirector
-  gameManager: {fileID: 2101514194}
-  mapManager: {fileID: 2101514198}
-  mapGenerator: {fileID: 2101514199}
-  itemPrefab: {fileID: 1107078259204203219, guid: 49ffdf38c82c0314ea9a8032329915a8, type: 3}
-  itemParent: {fileID: 606146320}
-  initialPoolSize: 30
-  maxPoolSize: 150
+  m_EditorClassIdentifier: Assembly-CSharp::GameScenario
+  gameManager: {fileID: 115036438}
+  levelDirector: {fileID: 115036437}
+  mapManager: {fileID: 39173974}
+  maxEpisodeTime: 30
+  absorptionInterval: 10
 --- !u!1001 &1968177648282763629
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14108,6 +14257,7 @@ SceneRoots:
   - {fileID: 1775625598}
   - {fileID: 91138790}
   - {fileID: 2101514195}
+  - {fileID: 743038173}
   - {fileID: 786387406}
   - {fileID: 1460599320}
   - {fileID: 106146549}

@@ -2,27 +2,21 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("Logic")]
-    [SerializeField] private LevelDirector levelDirector;
+
     [Header("Score Views")]
-    [SerializeField] private TeamScoreView teamAScore;
-    [SerializeField] private TeamScoreView teamBScore;
-    [SerializeField] private TeamScoreView neutralScore;
+    [SerializeField]
+    private TeamScoreView teamAScore;
 
-    void OnEnable()
-    {
-        levelDirector.OnLevelInitialized += Initialize;
-    }
+    [SerializeField]
+    private TeamScoreView teamBScore;
 
-    void OnDisable()
-    {
-        levelDirector.OnLevelInitialized -= Initialize;
-    }
+    [SerializeField]
+    private TeamScoreView neutralScore;
 
-    private void Initialize(GameManager gameManager)
+    public void Initialize(MatchManager matchManager)
     {
-        teamAScore?.Bind(gameManager.GetTeamContext(gameManager.TeamA));
-        teamBScore?.Bind(gameManager.GetTeamContext(gameManager.TeamB));
-        neutralScore?.Bind(gameManager.GetTeamContext(gameManager.NeutralTeam));
+        teamAScore?.Bind(matchManager.GetTeamContext(matchManager.TeamA));
+        teamBScore?.Bind(matchManager.GetTeamContext(matchManager.TeamB));
+        neutralScore?.Bind(matchManager.GetTeamContext(matchManager.NeutralTeam));
     }
 }

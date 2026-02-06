@@ -11,11 +11,20 @@ public class TeamContext
         Team = team;
     }
 
-    public void SetScore(int newValue)
+    public void Reset()
     {
-        Score = newValue;
+        Score = 0;
         OnScoreChanged?.Invoke(Score);
     }
 
-    public void AddScore(int amount) => SetScore(Score + amount);
+    public void SetScore(int newValue, bool notify = true)
+    {
+        if (Score == newValue) return;
+
+        Score = newValue;
+        if (notify)
+            OnScoreChanged?.Invoke(Score);
+    }
+
+    public void AddScore(int amount, bool notify = true) => SetScore(Score + amount, notify);
 }

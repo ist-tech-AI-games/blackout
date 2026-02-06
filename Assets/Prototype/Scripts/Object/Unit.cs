@@ -7,27 +7,31 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     public event Action<UnitData> OnClassChanged;
     public event Action<Unit> OnUnitDead;
 
-    [field: SerializeField] public UnitData UnitData { get; private set; }
-    [field: SerializeField] public TeamData Team { get; private set; }
+    [field: SerializeField]
+    public UnitData UnitData { get; private set; }
+
+    [field: SerializeField]
+    public TeamData Team { get; private set; }
 
     public CollisionBound CollisionBound => UnitData.CollisionBound;
     public Vector2 GlobalPos => transform.position;
 
     public MapTile OwnedTile { get; set; }
 
-    [SerializeField] private Transform itemHolder;
+    [SerializeField]
+    private Transform itemHolder;
 
     // dependencies
-    private GameManager gameManager;
+    private MatchManager matchManager;
     private MapManager mapManager;
     private UnitMovementSystem unitMovementSystem;
     private UnitInteractionSystem unitInteractionSystem;
 
     public ItemObject HoldingItem { get; private set; } = null;
 
-    public void Initialize(GameManager gameManager, MapManager mapManager)
+    public void Initialize(MatchManager gameManager, MapManager mapManager)
     {
-        this.gameManager = gameManager;
+        this.matchManager = gameManager;
         this.mapManager = mapManager;
         unitMovementSystem = new(mapManager, UnitData, Team);
         unitInteractionSystem = new(mapManager, this);
@@ -51,7 +55,8 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     /// <returns>변신 성공 여부</returns>
     public bool TryTransform(UnitData requiredInput, UnitData targetOutput)
     {
-        if (UnitData != requiredInput) return false;
+        if (UnitData != requiredInput)
+            return false;
 
         SetUnitClass(targetOutput);
         return true;
@@ -62,11 +67,12 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     /// </summary>
     public ItemObject RetrieveItem()
     {
-        if (HoldingItem == null) return null;
+        if (HoldingItem == null)
+            return null;
 
         ItemObject item = HoldingItem;
         HoldingItem = null;
-        
+
         // (선택사항) 아이템 부모 관계 해제 등은 ItemObject.OnDropped에서 처리됨
         return item;
     }
@@ -83,9 +89,13 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         OnClassChanged?.Invoke(unitData);
     }
 
-    public void Move(Vector2 input)
+    public void Move(Vector2 input, float deltaTime)
     {
-        Vector2 targetPosition = unitMovementSystem.CalculateNextPosition(transform.position, input, Time.deltaTime);
+        Vector2 targetPosition = unitMovementSystem.CalculateNextPosition(
+            transform.position,
+            input,
+            deltaTime
+        );
         ChangePos(targetPosition);
         unitInteractionSystem.ProcessInteractions(targetPosition);
     }
@@ -131,7 +141,7 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
                 item.transform.SetParent(itemHolder);
                 item.transform.localPosition = Vector3.zero;
             }
-        } 
+        }
         else
         {
             Debug.LogError("This method only handles item interaction");
@@ -146,7 +156,10 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
             HoldingItem.OnDestroyed();
             HoldingItem = null;
         }
-        gameManager.RespawnUnit(this);
+
+        matchManager.EventBus.Unit.PublishUnitDead(this);
+
+        matchManager.RespawnUnit(this);
         OnUnitDead?.Invoke(this);
     }
 
