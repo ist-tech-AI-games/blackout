@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class GameTimer
 {
@@ -7,7 +8,9 @@ public class GameTimer
     public bool IsLoop { get; private set; }
     public Action OnComplete { get; private set; }
     
-    private float currentTime;
+    public float CurrentTime { get; private set; }
+    public float Ratio => Mathf.Clamp01(CurrentTime / Duration);
+    public float RemainingTime => Mathf.Max(0, Duration - CurrentTime);
     private bool isFinished;
 
     public GameTimer(float duration, bool isLoop, Action onComplete)
@@ -15,7 +18,7 @@ public class GameTimer
         Duration = duration;
         IsLoop = isLoop;
         OnComplete = onComplete;
-        currentTime = 0f;
+        CurrentTime = 0f;
         isFinished = false;
     }
 
@@ -23,12 +26,12 @@ public class GameTimer
     {
         if (isFinished) return true;
 
-        currentTime += dt;
-        if (currentTime >= Duration)
+        CurrentTime += dt;
+        if (CurrentTime >= Duration)
         {
             UnityEngine.Debug.Log("Timer completed");
             OnComplete?.Invoke();
-            if (IsLoop) currentTime -= Duration;
+            if (IsLoop) CurrentTime -= Duration;
             else { isFinished = true; return true; }
         }
         return false;

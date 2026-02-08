@@ -109,7 +109,7 @@ public class MatchManager : MonoBehaviour
         TeamData winner;
         if (scoreA > scoreB) winner = TeamA;
         else if (scoreB > scoreA) winner = TeamB;
-        else winner = NeutralTeam;
+        else winner = null;
 
         eventBus.Flow.PublishGameEnded(winner);
     }

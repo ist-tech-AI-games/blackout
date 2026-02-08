@@ -36,6 +36,7 @@ public class LevelDirector : MonoBehaviour
     private int maxPoolSize = 150;
 
     private GameEventBus eventBus;
+    private GameScenario gameScenario;
 
     // Object Pool
     private IObjectPool<ItemObject> itemPool;
@@ -44,6 +45,7 @@ public class LevelDirector : MonoBehaviour
 
     public void Initialize(GameScenario gameScenario)
     {
+        this.gameScenario = gameScenario;
         eventBus = gameScenario.EventBus;
 
         itemPool = new ObjectPool<ItemObject>(
@@ -93,7 +95,7 @@ public class LevelDirector : MonoBehaviour
         mapGenerator.SpawnItemObjects(mapManager, SpawnItem);
 
         OnLevelInitialized?.Invoke(matchManager);
-        uIManager.Initialize(matchManager);
+        uIManager.Initialize(matchManager, gameScenario);
 
         isGamePlaying = true;
     }

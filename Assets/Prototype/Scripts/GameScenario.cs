@@ -19,6 +19,9 @@ public class GameScenario : MonoBehaviour
     [SerializeField]
     private MapManager mapManager;
 
+    [SerializeField]
+    private UIManager uiManager;
+
     [Header("Settings")]
     [SerializeField]
     private float maxEpisodeTime = 600f;
@@ -28,6 +31,8 @@ public class GameScenario : MonoBehaviour
 
     public GameEventBus EventBus { get; private set; }
     public TimerManager TimerManager { get; private set; }
+    public GameTimer EpisodeTimer { get; private set; }
+    public GameTimer AbsorptionTimer { get; private set; }
     public GameState CurrentState { get; private set; } = GameState.Initializing;
 
     public void Initialize()
@@ -47,8 +52,8 @@ public class GameScenario : MonoBehaviour
         // EventBus.Reset();
         TimerManager.Clear();
 
-        TimerManager.AddTimer(maxEpisodeTime, false, () => EventBus.Flow.PublishTimeExpired());
-        TimerManager.AddTimer(absorptionInterval, true, () => EventBus.World.PublishAbsorption());
+        EpisodeTimer = TimerManager.AddTimer(maxEpisodeTime, false, () => EventBus.Flow.PublishTimeExpired());
+        AbsorptionTimer = TimerManager.AddTimer(absorptionInterval, true, () => EventBus.World.PublishAbsorption());
 
         levelDirector.StartEpisode();
     }
@@ -57,6 +62,7 @@ public class GameScenario : MonoBehaviour
     {
         if (CurrentState != GameState.Playing) return;
         TimerManager.Tick(deltaTime);
+        uiManager?.UpdateUI(EpisodeTimer, AbsorptionTimer);
     }
 
     public void MoveUnit(int unitIndex, Vector2 moveInput, float deltaTime)
