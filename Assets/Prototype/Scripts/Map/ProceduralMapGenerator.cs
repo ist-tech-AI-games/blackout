@@ -154,11 +154,11 @@ public class ProceduralMapGenerator : MapGenerator
             // Team A
             var dataA = shuffled[i];
             dataA.Team = teamA;
-            CreateAndApplyRegion(dataA, regions, mapTiles, isProcedural: true);
+            CreateAndApplyRegion(dataA, regions, mapTiles, teamASpawnPoint, isProcedural: true);
 
             // Team B
             var dataB = RegionUtils.CreateSymmetricRegion(dataA, teamB);
-            CreateAndApplyRegion(dataB, regions, mapTiles, isProcedural: true);
+            CreateAndApplyRegion(dataB, regions, mapTiles, teamBSpawnPoint, isProcedural: true);
         }
     }
 
@@ -167,6 +167,7 @@ public class ProceduralMapGenerator : MapGenerator
         RegionData data,
         List<MapRegion> regions,
         MapTile[,] mapTiles,
+        Vector2Int? anchorPos = null,
         bool isProcedural = false
     )
     {
@@ -198,6 +199,11 @@ public class ProceduralMapGenerator : MapGenerator
                     region.MapTiles.Add(mapTiles[i, j]);
                 }
             }
+        }
+
+        if (region is Storage storage && anchorPos.HasValue)
+        {
+            storage.Initialize(anchorPos.Value);
         }
     }
 

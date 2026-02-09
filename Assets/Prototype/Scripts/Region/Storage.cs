@@ -11,6 +11,25 @@ public class Storage : MapRegion
         public bool IsNewItem;
     }
 
+    public void Initialize(Vector2Int anchorPos)
+    {
+        // 기준점으로부터 먼 순서(내림차순)로 정렬.
+        // 맨해튼 거리 사용. 동률 시 x 오름차순, y 오름차순 순서대로 적용.
+        MapTiles.Sort((a, b) => 
+        {
+            int distA = Mathf.Abs(a.CellPos.x - anchorPos.x) + Mathf.Abs(a.CellPos.y - anchorPos.y);
+            int distB = Mathf.Abs(b.CellPos.x - anchorPos.x) + Mathf.Abs(b.CellPos.y - anchorPos.y);
+            
+            int compare = distB.CompareTo(distA);
+            if (compare != 0) return compare;
+
+            compare = a.CellPos.x.CompareTo(b.CellPos.x);
+            if (compare != 0) return compare;
+
+            return a.CellPos.y.CompareTo(b.CellPos.y);
+        });
+    }
+
     public override void OnUnitEnter(Unit unit)
     {
         if (unit.Team != OwnedTeam || unit.HoldingItem == null) return;
