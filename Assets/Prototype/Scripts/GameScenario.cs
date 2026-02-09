@@ -61,6 +61,7 @@ public class GameScenario : MonoBehaviour
     public void EpisodeUpdate(float deltaTime)
     {
         if (CurrentState != GameState.Playing) return;
+        levelDirector.ManualLateUpdate();
         TimerManager.Tick(deltaTime);
         uiManager?.UpdateUI(EpisodeTimer, AbsorptionTimer);
     }

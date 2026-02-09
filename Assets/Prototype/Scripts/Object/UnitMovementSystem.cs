@@ -4,8 +4,7 @@ public class UnitMovementSystem
 {
     private readonly IMapCollisionContext mapContext;
     private readonly TeamData team;
-    private UnitData unitData;
-    
+
     private static readonly Vector2Int[] neighborDelta = new Vector2Int[]
     {
         new(-1, -1), new(-1, 0), new(-1, 1),
@@ -13,28 +12,21 @@ public class UnitMovementSystem
         new(1, -1),  new(1, 0),  new(1, 1),
     };
 
-    public UnitMovementSystem(IMapCollisionContext mapContext, UnitData unitData, TeamData team)
+    public UnitMovementSystem(IMapCollisionContext mapContext, TeamData team)
     {
         this.mapContext = mapContext;
-        this.unitData = unitData;
         this.team = team;
-    }
-
-    public void SetUnitClass(UnitData unitData)
-    {
-        this.unitData = unitData;
     }
 
     /// <summary>
     /// 입력과 델타타임을 기반으로 충돌을 적용한 다음 위치를 계산.
     /// </summary>
-    public Vector2 CalculateNextPosition(Vector2 currentPos, Vector2 inputDir, float deltaTime)
+    public Vector2 CalculateNextPosition(Vector2 currentPos, Vector2 displacement, CollisionBound collisionBound)
     {
-        Vector2 displacement = inputDir * unitData.Speed * deltaTime;
-        return ClampPosition(currentPos, displacement);
+        return ClampPosition(currentPos, displacement, collisionBound);
     }
 
-    private Vector2 ClampPosition(Vector2 currentPos, Vector2 displacement)
+    private Vector2 ClampPosition(Vector2 currentPos, Vector2 displacement, CollisionBound collisionBound)
     {
         Vector2 desired = currentPos + displacement;
         Vector2Int currentCell = mapContext.WorldToCell(currentPos);
@@ -56,7 +48,7 @@ public class UnitMovementSystem
 
                     desired = CollisionUtils.GetClampedPosition(
                         desired,
-                        unitData.CollisionBound,
+                        collisionBound,
                         tileCenter,
                         tileBound
                     );

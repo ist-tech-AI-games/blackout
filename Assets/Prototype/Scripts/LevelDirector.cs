@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
+using Random = UnityEngine.Random;
 
 public class LevelDirector : MonoBehaviour
 {
@@ -35,6 +36,16 @@ public class LevelDirector : MonoBehaviour
     [SerializeField]
     private int maxPoolSize = 150;
 
+    [Header("Dynamic Spawning")]
+    [SerializeField]
+    private List<ItemData> specialItemPrototypes;
+
+    [SerializeField]
+    private float spawnCooldown = 15f;
+
+    [SerializeField]
+    private MapTileData spawnItemTileFilter;
+
     private GameEventBus eventBus;
     private GameScenario gameScenario;
 
@@ -42,6 +53,10 @@ public class LevelDirector : MonoBehaviour
     private IObjectPool<ItemObject> itemPool;
     private HashSet<ItemObject> activeItems = new();
     private bool isGamePlaying = false;
+
+    // Dynamic Spawning
+    private ItemObject currentSpecialItem;
+    private float currentSpawnTimer = 0f;
 
     public void Initialize(GameScenario gameScenario)
     {
@@ -78,6 +93,12 @@ public class LevelDirector : MonoBehaviour
             isGamePlaying = false;
     }
 
+    public void ManualLateUpdate()
+    {
+        if (!isGamePlaying) return;
+
+        UpdateSpecialItemSpawner(Time.deltaTime);
+    }
 
     private void PerformReset()
     {
@@ -94,6 +115,9 @@ public class LevelDirector : MonoBehaviour
         matchManager.ResetAllUnits(mapData);
         mapGenerator.SpawnItemObjects(mapManager, SpawnItem);
 
+        currentSpecialItem = null;
+        currentSpawnTimer = 0f;
+
         OnLevelInitialized?.Invoke(matchManager);
         uIManager.Initialize(matchManager, gameScenario);
 
@@ -109,7 +133,7 @@ public class LevelDirector : MonoBehaviour
         Debug.Log("Absorption");
 
         var snapshot = new List<ItemObject>(activeItems);
-        
+
         foreach (var item in snapshot)
         {
             if (item.OwnedTile != null && item.OwnedTile.OwnedRegion is Storage)
@@ -153,5 +177,49 @@ public class LevelDirector : MonoBehaviour
     private void OnDestroyItem(ItemObject item)
     {
         Destroy(item.gameObject);
+    }
+
+    // ===== Dynamic Spawning =====
+
+    private void UpdateSpecialItemSpawner(float dt)
+    {
+        if (currentSpecialItem != null && currentSpecialItem.gameObject.activeSelf)
+            return;
+
+        currentSpawnTimer += dt;
+
+        if (currentSpawnTimer >= spawnCooldown)
+        {
+            SpawnSpecialItem();
+            currentSpawnTimer = 0f;
+        }
+    }
+
+    // 지정된 유형의 공역 타일이며 다른 아이템이 없을 것.
+    private bool FilterAvailableSpawnPos(MapTile mapTile) => 
+        !matchManager.GetPlayableTeamContexts()
+            .Contains(matchManager.GetTeamContext(mapTile.OwnedRegion.OwnedTeam)) 
+        && mapTile.TileData == spawnItemTileFilter
+        && !mapTile.MapObjects.Any(obj => obj is ItemObject);
+
+    private void SpawnSpecialItem()
+    {
+        if (specialItemPrototypes == null || specialItemPrototypes.Count == 0) return;
+
+        ItemData selectedData = specialItemPrototypes[Random.Range(0, specialItemPrototypes.Count)];
+
+        MapTile targetTile = mapManager.GetRandomTile(FilterAvailableSpawnPos);
+        if (targetTile == null)
+        {
+            currentSpawnTimer = spawnCooldown - 1f; // 재시도
+            return;
+        }
+
+        ItemObject newItem = itemPool.Get();
+        newItem.RegisterToMap(selectedData, 1, targetTile.CellPos);
+
+        currentSpecialItem = newItem;
+
+        Debug.Log($"Special Item Spawned: {selectedData.name} at {targetTile.CellPos}");
     }
 }

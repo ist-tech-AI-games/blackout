@@ -30,7 +30,7 @@ public class ItemData : ScriptableObject
     private ItemAmountTier[] amountTiers;
 
     [field: SerializeField]
-    public ItemEffect Effect { get; private set; }
+    public ItemEffect[] Effects { get; private set; }
 
     [field: SerializeField]
     public int MaxItemAmount { get; private set; } = 1;

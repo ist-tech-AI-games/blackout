@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 325aa1a78d97a6a40bf550da2fc41655, type: 3}
-  m_Name: Coin
+  m_Name: TestDebuffItem
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  defaultSprite: {fileID: 584332810, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
+  defaultSprite: {fileID: -869921246, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
   amountTiers: []
   <Effects>k__BackingField:
-  - {fileID: 11400000, guid: 55ff41d363c2d7042937fcfbd2c55a54, type: 2}
-  <MaxItemAmount>k__BackingField: 10
+  - {fileID: 11400000, guid: 49daf8cc517565a409c73f0d5ddef163, type: 2}
+  <MaxItemAmount>k__BackingField: 1
   <CollisionBound>k__BackingField:
     Type: 0
-    Width: 0.6
+    Width: 0.8
   <InteractionOption>k__BackingField: 1

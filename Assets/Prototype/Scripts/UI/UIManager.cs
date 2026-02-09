@@ -14,9 +14,16 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TeamScoreView neutralScore;
 
+    [Header("Timer Views")]
     [SerializeField]
     private GameTimerView timerView;
 
+    [Header("Effect Views")]
+    [SerializeField] private ActiveEffectsView teamAEffects;
+    [SerializeField] private ActiveEffectsView teamBEffects;
+    [SerializeField] private EffectTooltipView tooltipView;
+
+    [Header("Result Views")]
     [SerializeField]
     private ResultPanelView resultPanelView;
 
@@ -29,6 +36,9 @@ public class UIManager : MonoBehaviour
         teamAScore?.Bind(matchManager.GetTeamContext(matchManager.TeamA));
         teamBScore?.Bind(matchManager.GetTeamContext(matchManager.TeamB));
         neutralScore?.Bind(matchManager.GetTeamContext(matchManager.NeutralTeam));
+
+        teamAEffects?.Bind(matchManager.GetTeamContext(matchManager.TeamA), tooltipView);
+        teamBEffects?.Bind(matchManager.GetTeamContext(matchManager.TeamB), tooltipView);
 
         gameScenario.EventBus.Flow.OnGameEnded -= OnGameEnded;
         gameScenario.EventBus.Flow.OnGameEnded += OnGameEnded;

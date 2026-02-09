@@ -16,7 +16,7 @@ MonoBehaviour:
   <CollisionBound>k__BackingField:
     Type: 0
     Width: 0.55
-  <Speed>k__BackingField: 3
+  <BaseSpeed>k__BackingField: 4
   <Collectable>k__BackingField: 1
   <Beats>k__BackingField:
   - {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}

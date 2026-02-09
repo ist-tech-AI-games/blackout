@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -29,6 +30,7 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
     private MapManager mapManager;
     private IObjectPool<ItemObject> managedPool;
     private Transform worldParent;
+    private List<(TeamContext context, StatModifier modifier)> appliedModifiers = new();
 
     // ===== Initialization & Lifecycle =====
 
@@ -76,7 +78,7 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
 
         matchManager.EventBus.Unit.PublishItemPickedUp(unit, this);
 
-        ExitCurrentRegion(ItemExitReason.Dropped); 
+        ExitCurrentRegion(ItemExitReason.Dropped);
         RemoveFromMap();
 
         State = ItemState.Carried;
@@ -102,7 +104,7 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
             ExitCurrentRegion(ItemExitReason.Destroyed);
 
         RemoveFromMap();
-        
+
         State = ItemState.InPool;
 
         if (managedPool != null) managedPool.Release(this);
@@ -189,18 +191,86 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
     // 실제 Effect SO 호출 (가장 낮은 레벨의 로직)
     private void ApplyEffectInternal(TeamContext context, int amount, ItemExitReason reason, bool isEnter)
     {
-        if (ItemData == null || ItemData.Effect == null || context == null) return;
+        if (ItemData == null || ItemData.Effects == null || context == null) return;
 
         if (isEnter)
-            ItemData.Effect.EnterEffect(context, amount);
+        {
+            foreach (var effect in ItemData.Effects)
+            {
+                if (effect == null) continue;
+                ProcessEffectEnter(effect, context, amount);
+            }
+        }
         else
-            ItemData.Effect.ExitEffect(context, amount, reason);
+        {
+            // 효과 해제
+            for (int i = appliedModifiers.Count - 1; i >= 0; i--)
+            {
+                var (ctx, mod) = appliedModifiers[i];
+                ctx.RemoveModifier(mod);
+            }
+            appliedModifiers.Clear();
+
+            // 점수 해제
+            foreach (var effect in ItemData.Effects)
+            {
+                if (effect is ScoreItemEffect scoreEffect)
+                {
+                    scoreEffect.ExitEffect(context, amount, reason);
+                }
+            }
+        }
+    }
+
+    private void ProcessEffectEnter(ItemEffect effect, TeamContext ownerContext, int amount)
+    {
+        // 다형성 깨지지만 일단 나중에 고쳐야지
+        if (effect is ScoreItemEffect scoreEffect)
+        {
+            scoreEffect.EnterEffect(ownerContext, amount);
+        }
+        else if (effect is BuffItemEffect buffEffect)
+        {
+            List<TeamContext> targets = ResolveTargetContexts(buffEffect.TargetStrategy, ownerContext);
+            
+            StatModifier mod = buffEffect.CreateModifier(this);
+
+            foreach (var targetCtx in targets)
+            {
+                targetCtx.AddModifier(mod);
+                appliedModifiers.Add((targetCtx, mod));
+            }
+        }
+    }
+
+    private List<TeamContext> ResolveTargetContexts(EffectTargetStrategy strategy, TeamContext ownerContext)
+    {
+        var results = new List<TeamContext>();
+        if (matchManager == null) return results;
+
+        switch (strategy)
+        {
+            case EffectTargetStrategy.OwnerTeam:
+                results.Add(ownerContext);
+                break;
+
+            case EffectTargetStrategy.OpponentTeam:
+                var enemyData = matchManager.OpponentTeam(ownerContext.Team);
+                var enemyCtx = matchManager.GetTeamContext(enemyData);
+                if (enemyCtx != null) results.Add(enemyCtx);
+                break;
+
+            case EffectTargetStrategy.AllTeams:
+                results.AddRange(matchManager.GetPlayableTeamContexts());
+                break;
+        }
+        return results;
     }
 
     public bool IsInteractable(TeamData team)
     {
         if (ItemData == null) return false;
-        
+
         // 현재 타일의 소유권 확인
         TeamData regionTeam = OwnedTile?.OwnedRegion?.OwnedTeam;
 

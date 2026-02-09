@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e55cb2aca7404e4ea0230ee733ac633, type: 3}
+  m_Name: TestDebuff
+  m_EditorClassIdentifier: Assembly-CSharp::BuffItemEffect
+  StatType: 0
+  Value: -0.3
+  Operation: 1
+  Condition:
+    TargetClasses:
+    - {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
+  TargetStrategy: 1
+  DisplayInfo:
+    Name: Test Speed Buff
+    Description: Speed -30% for enemy workers.
+    Icon: {fileID: -869921246, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
+    IsHidden: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -54,4 +55,23 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     public MapTile GetTile(Vector2Int cellPos) => mapData?.GetTile(cellPos.x, cellPos.y);
 
     public MapTile GetTileAtWorldPos(Vector3 worldPos) => GetTile(WorldToCell(worldPos));
+
+    public MapTile GetRandomTile(Predicate<MapTile> filter)
+    {
+        int maxAttempts = 20;
+        
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            int x = UnityEngine.Random.Range(0, mapData.Width);
+            int y = UnityEngine.Random.Range(0, mapData.Height);
+            Vector2Int pos = new Vector2Int(x, y);
+
+            MapTile tile = GetTile(pos);
+
+            if (tile != null && filter(tile))
+                return tile;
+        }
+        
+        return null;
+    }
 }

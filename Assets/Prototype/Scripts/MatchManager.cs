@@ -114,6 +114,13 @@ public class MatchManager : MonoBehaviour
         eventBus.Flow.PublishGameEnded(winner);
     }
 
+    public IEnumerable<TeamContext> GetPlayableTeamContexts()
+    {
+        // 중립 제외
+        if (teamContextTable.TryGetValue(TeamA, out var ctxA)) yield return ctxA;
+        if (teamContextTable.TryGetValue(TeamB, out var ctxB)) yield return ctxB;
+    }
+
     public TeamData OpponentTeam(TeamData team) => team.Opponent;
 
     public TeamContext GetTeamContext(TeamData team) =>

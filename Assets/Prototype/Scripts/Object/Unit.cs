@@ -28,12 +28,25 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     private UnitInteractionSystem unitInteractionSystem;
 
     public ItemObject HoldingItem { get; private set; } = null;
-
-    public void Initialize(MatchManager gameManager, MapManager mapManager)
+    public float MoveSpeed
     {
-        this.matchManager = gameManager;
+        get
+        {
+            // 주의: 초기화 이후에 쓰지 않으면 적용 안 됨.
+            if (matchManager == null) return UnitData.BaseSpeed;
+
+            var context = matchManager.GetTeamContext(this.Team);
+            if (context == null) return UnitData.BaseSpeed;
+
+            return context.CalculateStat(this, StatType.MoveSpeed, UnitData.BaseSpeed);
+        }
+    }
+
+    public void Initialize(MatchManager matchManager, MapManager mapManager)
+    {
+        this.matchManager = matchManager;
         this.mapManager = mapManager;
-        unitMovementSystem = new(mapManager, UnitData, Team);
+        unitMovementSystem = new(mapManager, Team);
         unitInteractionSystem = new(mapManager, this);
     }
 
@@ -80,7 +93,6 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     public void SetUnitClass(UnitData unitData)
     {
         UnitData = unitData;
-        unitMovementSystem.SetUnitClass(unitData);
         if (!unitData.Collectable && HoldingItem != null)
         {
             HoldingItem.OnDestroyed();
@@ -93,8 +105,8 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     {
         Vector2 targetPosition = unitMovementSystem.CalculateNextPosition(
             transform.position,
-            input,
-            deltaTime
+            input.normalized * deltaTime * MoveSpeed,
+            UnitData.CollisionBound
         );
         ChangePos(targetPosition);
         unitInteractionSystem.ProcessInteractions(targetPosition);
