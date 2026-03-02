@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: GameBalanceConfig
   m_EditorClassIdentifier: Assembly-CSharp::GameBalanceConfig
   MaxEpisodeTime: 420
-  AbsorptionInterval: 80
+  AbsorptionInterval: 20
   TargetScore: 100
   InitialBatteryTotalScore: 200
   MinBatteryAmount: 1
   MaxBatteryAmount: 8
   StorageCountPerTeam: 4
   SymmetricBatterySpawn: 0
-  SpecialItemSpawnCooldown: 15
+  SpecialItemSpawnCooldown: 10
   ItemPoolInitialSize: 30
   ItemPoolMaxSize: 150
   VerboseLogging: 0

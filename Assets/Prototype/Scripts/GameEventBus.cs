@@ -17,10 +17,12 @@ public class GameEventBus
     {
         public event Action OnTimeExpired;
         public event Action<TeamData> OnGameEnded;
-        
+        public event Action<MatchManager, GameScenario> OnEpisodeStarted;
+
         public void PublishTimeExpired() => OnTimeExpired?.Invoke();
         public void PublishGameEnded(TeamData winner) => OnGameEnded?.Invoke(winner);
-        public void Clear() { OnTimeExpired = null; OnGameEnded = null; }
+        public void PublishEpisodeStarted(MatchManager matchManager, GameScenario gameScenario) => OnEpisodeStarted?.Invoke(matchManager, gameScenario);
+        public void Clear() { OnTimeExpired = null; OnGameEnded = null; OnEpisodeStarted = null; }
     }
 
     public class WorldEvents

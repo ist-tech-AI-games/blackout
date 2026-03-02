@@ -16,9 +16,6 @@ public class LevelDirector : MonoBehaviour
     [SerializeField]
     private MapManager mapManager;
 
-    [SerializeField]
-    private UIManager uIManager;  // Logic에서 View를 참조하는 좋지 않은 방식이지만, 초기화 중앙화를 위한 설계.
-
     [Header("Generation")]
     [SerializeField]
     private MapGenerator mapGenerator;
@@ -112,8 +109,9 @@ public class LevelDirector : MonoBehaviour
         currentSpecialItem = null;
         currentSpawnTimer = 0f;
 
+        // Publish episode started event for UI and other systems to initialize
         OnLevelInitialized?.Invoke(matchManager);
-        uIManager.Initialize(matchManager, gameScenario);
+        eventBus.Flow.PublishEpisodeStarted(matchManager, gameScenario);
 
         isGamePlaying = true;
     }

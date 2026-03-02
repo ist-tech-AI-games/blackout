@@ -896,7 +896,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelDirector
   matchManager: {fileID: 115036438}
   mapManager: {fileID: 39173974}
-  uIManager: {fileID: 1460599321}
   mapGenerator: {fileID: 39173976}
   itemPrefab: {fileID: 1107078259204203219, guid: 49ffdf38c82c0314ea9a8032329915a8, type: 3}
   itemParent: {fileID: 606146320}
@@ -15243,6 +15242,7 @@ MonoBehaviour:
   teamBEffects: {fileID: 1612261789}
   tooltipView: {fileID: 1698307205}
   resultPanelView: {fileID: 2060512713}
+  gameScenario: {fileID: 2101514196}
 --- !u!1 &1467158486
 GameObject:
   m_ObjectHideFlags: 0

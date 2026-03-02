@@ -1,6 +1,10 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Manages all UI views and binds them to game data.
+/// Subscribes to GameEventBus for decoupled initialization (no direct reference from LevelDirector).
+/// </summary>
 public class UIManager : MonoBehaviour
 {
 
@@ -27,8 +31,39 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private ResultPanelView resultPanelView;
 
+    [Header("Dependencies")]
+    [SerializeField]
+    private GameScenario gameScenario;
+
     private MatchManager matchManager;
 
+    /// <summary>
+    /// Subscribe to episode started event during Unity Awake.
+    /// This decouples UI from logic - LevelDirector doesn't need to reference UIManager.
+    /// </summary>
+    private void Awake()
+    {
+        if (gameScenario != null)
+        {
+            // Unsubscribe first to prevent duplicate subscriptions
+            gameScenario.EventBus.Flow.OnEpisodeStarted -= OnEpisodeStarted;
+            gameScenario.EventBus.Flow.OnEpisodeStarted += OnEpisodeStarted;
+        }
+    }
+
+    /// <summary>
+    /// Called when episode starts via GameEventBus event.
+    /// Binds all UI views to match data.
+    /// </summary>
+    private void OnEpisodeStarted(MatchManager matchManager, GameScenario gameScenario)
+    {
+        Initialize(matchManager, gameScenario);
+    }
+
+    /// <summary>
+    /// Initializes UI by binding views to match data.
+    /// Now called via event instead of direct reference from LevelDirector.
+    /// </summary>
     public void Initialize(MatchManager matchManager, GameScenario gameScenario)
     {
         this.matchManager = matchManager;
@@ -59,5 +94,16 @@ public class UIManager : MonoBehaviour
         int scoreB = matchManager.GetTeamContext(matchManager.TeamB).Score;
 
         resultPanelView.Show(winner, scoreA, scoreB);
+    }
+
+    /// <summary>
+    /// Unity lifecycle method - cleanup event subscriptions to prevent memory leaks.
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (gameScenario != null)
+        {
+            gameScenario.EventBus.Flow.OnEpisodeStarted -= OnEpisodeStarted;
+        }
     }
 }

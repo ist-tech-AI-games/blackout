@@ -12,10 +12,37 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     private MapData mapData;
     public MapSpaceInfo MapSpaceInfo => mapData?.MapSpaceInfo;
 
+    // Pre-computed tile cache for efficient random sampling
+    private List<MapTile> allTilesCache;
+
     public void Initialize(MapData mapData)
     {
         this.mapData = mapData;
         teamAreaViewer?.ColorTiles(mapData);
+
+        // Pre-compute all tiles for faster access
+        BuildTileCache();
+    }
+
+    /// <summary>
+    /// Builds cache of all tiles for efficient random access.
+    /// Called once during initialization since map doesn't change at runtime.
+    /// </summary>
+    private void BuildTileCache()
+    {
+        allTilesCache = new List<MapTile>(mapData.Width * mapData.Height);
+
+        for (int y = 0; y < mapData.Height; y++)
+        {
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                MapTile tile = mapData.GetTile(x, y);
+                if (tile != null)
+                {
+                    allTilesCache.Add(tile);
+                }
+            }
+        }
     }
 
     public Vector3 CellToCenterWorld(Vector2Int cellPos) => tilemap.GetCellCenterWorld((Vector3Int)cellPos);
@@ -56,22 +83,31 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
 
     public MapTile GetTileAtWorldPos(Vector3 worldPos) => GetTile(WorldToCell(worldPos));
 
+    /// <summary>
+    /// Gets a random tile that matches the filter predicate.
+    /// Uses pre-computed tile cache for reliable selection - guaranteed to find a tile if one exists.
+    /// Much more reliable than rejection sampling (old approach could fail after 20 attempts).
+    /// </summary>
     public MapTile GetRandomTile(Predicate<MapTile> filter)
     {
-        int maxAttempts = 20;
-        
-        for (int i = 0; i < maxAttempts; i++)
+        if (allTilesCache == null || allTilesCache.Count == 0)
+            return null;
+
+        // Build list of matching tiles (one-time O(n) scan instead of random sampling)
+        List<MapTile> candidates = new List<MapTile>();
+        foreach (MapTile tile in allTilesCache)
         {
-            int x = UnityEngine.Random.Range(0, mapData.Width);
-            int y = UnityEngine.Random.Range(0, mapData.Height);
-            Vector2Int pos = new Vector2Int(x, y);
-
-            MapTile tile = GetTile(pos);
-
-            if (tile != null && filter(tile))
-                return tile;
+            if (filter(tile))
+            {
+                candidates.Add(tile);
+            }
         }
-        
-        return null;
+
+        // Return random tile from candidates
+        if (candidates.Count == 0)
+            return null;
+
+        int randomIndex = UnityEngine.Random.Range(0, candidates.Count);
+        return candidates[randomIndex];
     }
 }

@@ -11,6 +11,10 @@ public enum ObjectInteractionOption
     All,
 }
 
+/// <summary>
+/// Configuration data for item types (batteries, special items).
+/// Defines visuals (sprite tiers), effects, max stack size, collision, and interaction rules.
+/// </summary>
 [CreateAssetMenu(menuName = "Project/Item Data")]
 public class ItemData : ScriptableObject
 {
@@ -41,6 +45,45 @@ public class ItemData : ScriptableObject
     [field: SerializeField]
     public ObjectInteractionOption InteractionOption { get; private set; } =
         ObjectInteractionOption.IgnoreFriend;
+
+    /// <summary>
+    /// Validates configuration values when changed in the Unity Inspector.
+    /// Ensures MaxItemAmount is positive and amountTiers are properly configured.
+    /// </summary>
+    private void OnValidate()
+    {
+        // MaxItemAmount must be at least 1
+        if (MaxItemAmount < 1)
+        {
+            Debug.LogWarning($"[ItemData:{name}] MaxItemAmount must be at least 1. Resetting to 1.", this);
+            MaxItemAmount = 1;
+        }
+
+        // Validate amountTiers
+        if (amountTiers != null && amountTiers.Length > 0)
+        {
+            for (int i = 0; i < amountTiers.Length; i++)
+            {
+                // MinAmount should be non-negative
+                if (amountTiers[i].MinAmount < 0)
+                {
+                    Debug.LogWarning($"[ItemData:{name}] amountTiers[{i}].MinAmount is negative ({amountTiers[i].MinAmount}). Should be >= 0.", this);
+                }
+
+                // Warn if tier sprite is missing
+                if (amountTiers[i].Sprite == null)
+                {
+                    Debug.LogWarning($"[ItemData:{name}] amountTiers[{i}].Sprite is null. Consider assigning a sprite or removing this tier.", this);
+                }
+
+                // Check if tiers are sorted (recommended for clarity, not required)
+                if (i > 0 && amountTiers[i].MinAmount < amountTiers[i - 1].MinAmount)
+                {
+                    Debug.LogWarning($"[ItemData:{name}] amountTiers are not sorted by MinAmount. Tier {i} ({amountTiers[i].MinAmount}) < Tier {i - 1} ({amountTiers[i - 1].MinAmount}). Consider sorting for clarity.", this);
+                }
+            }
+        }
+    }
 
     public Sprite GetSprite(int amount)
     {

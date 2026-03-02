@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit : MonoBehaviour, IMapObject, IResettable
@@ -26,8 +27,13 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     private MapManager mapManager;
     private UnitMovementSystem unitMovementSystem;
     private UnitInteractionSystem unitInteractionSystem;
+    private TeamContext teamContext;
+
+    // Stat caching for performance
+    private Dictionary<StatType, float> cachedStats = new Dictionary<StatType, float>();
 
     public ItemObject HoldingItem { get; private set; } = null;
+
     public float MoveSpeed
     {
         get
@@ -35,11 +41,41 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
             // 주의: 초기화 이후에 쓰지 않으면 적용 안 됨.
             if (matchManager == null) return UnitData.BaseSpeed;
 
-            var context = matchManager.GetTeamContext(this.Team);
-            if (context == null) return UnitData.BaseSpeed;
-
-            return context.CalculateStat(this, StatType.MoveSpeed, UnitData.BaseSpeed);
+            return GetCachedStat(StatType.MoveSpeed, UnitData.BaseSpeed);
         }
+    }
+
+    /// <summary>
+    /// Gets a stat value from cache, calculating it if not cached.
+    /// Cache is invalidated automatically when team modifiers change.
+    /// </summary>
+    private float GetCachedStat(StatType statType, float baseValue)
+    {
+        if (cachedStats.TryGetValue(statType, out float cachedValue))
+        {
+            return cachedValue;
+        }
+
+        // Calculate and cache
+        if (teamContext == null)
+            teamContext = matchManager.GetTeamContext(Team);
+
+        if (teamContext == null)
+            return baseValue;
+
+        float calculatedValue = teamContext.CalculateStat(this, statType, baseValue);
+        cachedStats[statType] = calculatedValue;
+
+        return calculatedValue;
+    }
+
+    /// <summary>
+    /// Invalidates stat cache when modifiers change.
+    /// Called automatically via TeamContext events.
+    /// </summary>
+    private void InvalidateStatCache()
+    {
+        cachedStats.Clear();
     }
 
     public void Initialize(MatchManager matchManager, MapManager mapManager)
@@ -48,6 +84,23 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         this.mapManager = mapManager;
         unitMovementSystem = new(mapManager, Team);
         unitInteractionSystem = new(mapManager, this);
+
+        // Subscribe to modifier events for stat cache invalidation
+        teamContext = matchManager.GetTeamContext(Team);
+        if (teamContext != null)
+        {
+            teamContext.OnModifierAdded += OnModifierChanged;
+            teamContext.OnModifierRemoved += OnModifierChanged;
+        }
+    }
+
+    /// <summary>
+    /// Called when a modifier is added or removed from the team.
+    /// Invalidates stat cache to ensure consistency.
+    /// </summary>
+    private void OnModifierChanged(StatModifier modifier)
+    {
+        InvalidateStatCache();
     }
 
     public void ResetState()
@@ -60,6 +113,21 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
 
         gameObject.SetActive(true);
         OwnedTile = null;
+
+        // Clear stat cache on reset (modifiers will be reapplied)
+        InvalidateStatCache();
+    }
+
+    /// <summary>
+    /// Unity lifecycle method - cleanup event subscriptions to prevent memory leaks.
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (teamContext != null)
+        {
+            teamContext.OnModifierAdded -= OnModifierChanged;
+            teamContext.OnModifierRemoved -= OnModifierChanged;
+        }
     }
 
     /// <summary>
@@ -98,6 +166,7 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
             HoldingItem.OnDestroyed();
             HoldingItem = null;
         }
+        InvalidateStatCache();
         OnClassChanged?.Invoke(unitData);
     }
 
