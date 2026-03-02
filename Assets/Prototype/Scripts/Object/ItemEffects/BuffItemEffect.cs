@@ -1,5 +1,10 @@
 using UnityEngine;
+using System.Collections.Generic;
 
+/// <summary>
+/// Item effect that applies stat modifiers (buffs/debuffs) to target teams while in storage.
+/// Modifiers are added when entering storage and removed when exiting (unless absorbed).
+/// </summary>
 [CreateAssetMenu(menuName = "Project/Item Effects/Buff")]
 public class BuffItemEffect : ItemEffect
 {
@@ -22,7 +27,20 @@ public class BuffItemEffect : ItemEffect
         return new StatModifier(StatType, Value, Operation, Condition, DisplayInfo, source);
     }
 
-    // 어쩌다 보니 Liskov 치환 원칙 위반이지만 호환성 유지함.
-    public override void EnterEffect(TeamContext context, int amount) { }
-    public override void ExitEffect(TeamContext context, int amount, ItemExitReason reason) { }
+    public override void OnEnterStorage(ItemEffectContext context)
+    {
+        StatModifier modifier = CreateModifier(context.EffectSource);
+        List<TeamContext> targets = context.ResolveTargetContexts(TargetStrategy);
+
+        foreach (TeamContext target in targets)
+        {
+            context.AddModifier(target, modifier);
+        }
+    }
+
+    public override void OnExitStorage(ItemEffectContext context)
+    {
+        // Modifiers are automatically removed by ItemObject before this is called.
+        // No additional cleanup needed - modifiers disappear on all exit reasons including absorption.
+    }
 }

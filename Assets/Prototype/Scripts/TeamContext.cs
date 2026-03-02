@@ -12,6 +12,11 @@ public class TeamContext
 
     public event Action<StatModifier> OnModifierAdded;
     public event Action<StatModifier> OnModifierRemoved;
+
+    /// <summary>
+    /// Returns a read-only snapshot of currently active modifiers for debugging/inspection.
+    /// </summary>
+    public IReadOnlyList<StatModifier> GetActiveModifiers() => activeModifiers.AsReadOnly();
     
     public TeamContext(TeamData team)
     {
@@ -39,6 +44,12 @@ public class TeamContext
         {
             activeModifiers.Add(modifier);
             OnModifierAdded?.Invoke(modifier);
+
+            // Debug.Log($"[TeamContext:{Team.name}] Added modifier {modifier.Type} {modifier.Operation} {modifier.Value}. Active count: {activeModifiers.Count}");
+        }
+        else
+        {
+            // Debug.LogWarning($"[TeamContext:{Team.name}] Tried to add duplicate modifier {modifier.ID}");
         }
     }
 
@@ -48,6 +59,12 @@ public class TeamContext
         {
             activeModifiers.Remove(modifier);
             OnModifierRemoved?.Invoke(modifier);
+
+            // Debug.Log($"[TeamContext:{Team.name}] Removed modifier {modifier.Type} {modifier.Operation} {modifier.Value}. Active count: {activeModifiers.Count}");
+        }
+        else
+        {
+            // Debug.LogWarning($"[TeamContext:{Team.name}] Tried to remove non-existent modifier {modifier.ID}");
         }
     }
 

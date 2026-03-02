@@ -32,6 +32,11 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
     private Transform worldParent;
     private List<(TeamContext context, StatModifier modifier)> appliedModifiers = new();
 
+    // Debug inspection
+    public TeamContext CurrentAppliedContext => currentAppliedContext;
+    public IReadOnlyList<(TeamContext context, StatModifier modifier)> GetAppliedModifiers()
+        => appliedModifiers.AsReadOnly();
+
     // ===== Initialization & Lifecycle =====
 
     public void Initialize(MatchManager matchManager, MapManager mapManager, IObjectPool<ItemObject> pool, Transform worldParent)
@@ -195,15 +200,25 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
 
         if (isEnter)
         {
+            // Create context for entering storage
+            ItemEffectContext effectContext = new ItemEffectContext(
+                ownerContext: context,
+                itemAmount: amount,
+                matchManager: matchManager,
+                effectSource: this,
+                addModifier: AddModifierCallback,
+                removeModifier: RemoveModifierCallback
+            );
+
             foreach (var effect in ItemData.Effects)
             {
                 if (effect == null) continue;
-                ProcessEffectEnter(effect, context, amount);
+                effect.OnEnterStorage(effectContext);
             }
         }
         else
         {
-            // 효과 해제
+            // Remove all tracked modifiers (always, even on absorption)
             for (int i = appliedModifiers.Count - 1; i >= 0; i--)
             {
                 var (ctx, mod) = appliedModifiers[i];
@@ -211,66 +226,42 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
             }
             appliedModifiers.Clear();
 
-            // 점수 해제
+            // Create context for exiting storage
+            ItemEffectContext effectContext = ItemEffectContext.CreateForExit(
+                ownerContext: context,
+                itemAmount: amount,
+                exitReason: reason,
+                matchManager: matchManager,
+                effectSource: this,
+                addModifier: AddModifierCallback,
+                removeModifier: RemoveModifierCallback
+            );
+
+            // Call exit logic for each effect
             foreach (var effect in ItemData.Effects)
             {
-                if (effect is ScoreItemEffect scoreEffect)
-                {
-                    scoreEffect.ExitEffect(context, amount, reason);
-                }
+                if (effect == null) continue;
+                effect.OnExitStorage(effectContext);
             }
         }
     }
 
-    private void ProcessEffectEnter(ItemEffect effect, TeamContext ownerContext, int amount)
+    // Callback for ItemEffectContext to add modifiers (with tracking)
+    private void AddModifierCallback(TeamContext targetContext, StatModifier modifier)
     {
-        // 다형성 깨지지만 일단 나중에 고쳐야지
-        if (effect is ScoreItemEffect scoreEffect)
-        {
-            scoreEffect.EnterEffect(ownerContext, amount);
-        }
-        else if (effect is BuffItemEffect buffEffect)
-        {
-            List<TeamContext> targets = ResolveTargetContexts(buffEffect.TargetStrategy, ownerContext);
-            
-            StatModifier mod = buffEffect.CreateModifier(this);
+        targetContext.AddModifier(modifier);
+        appliedModifiers.Add((targetContext, modifier));
 
-            foreach (var targetCtx in targets)
-            {
-                targetCtx.AddModifier(mod);
-                appliedModifiers.Add((targetCtx, mod));
-            }
-        }
+        // Debug.Log($"[ItemObject] Added modifier {modifier.Type} {modifier.Operation} {modifier.Value} to {targetContext.Team.name}. Total tracked: {appliedModifiers.Count}");
     }
 
-    private List<TeamContext> ResolveTargetContexts(EffectTargetStrategy strategy, TeamContext ownerContext)
+    // Callback for ItemEffectContext to remove modifiers (with tracking)
+    private void RemoveModifierCallback(TeamContext targetContext, StatModifier modifier)
     {
-        var results = new List<TeamContext>();
-        if (matchManager == null || ownerContext == null) return results;
+        targetContext.RemoveModifier(modifier);
+        appliedModifiers.Remove((targetContext, modifier));
 
-        switch (strategy)
-        {
-            case EffectTargetStrategy.OwnerTeam:
-                results.Add(ownerContext);
-                break;
-
-            case EffectTargetStrategy.OpponentTeam:
-                if (ownerContext.Team != null)
-                {
-                    var enemyData = matchManager.OpponentTeam(ownerContext.Team);
-                    if (enemyData != null)
-                    {
-                        var enemyCtx = matchManager.GetTeamContext(enemyData);
-                        if (enemyCtx != null) results.Add(enemyCtx);
-                    }
-                }
-                break;
-
-            case EffectTargetStrategy.AllTeams:
-                results.AddRange(matchManager.GetPlayableTeamContexts());
-                break;
-        }
-        return results;
+        // Debug.Log($"[ItemObject] Removed modifier {modifier.Type} {modifier.Operation} {modifier.Value} from {targetContext.Team.name}. Total tracked: {appliedModifiers.Count}");
     }
 
     public bool IsInteractable(TeamData team)
