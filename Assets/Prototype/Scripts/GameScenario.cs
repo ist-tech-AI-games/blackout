@@ -1,12 +1,22 @@
 using UnityEngine;
 
+/// <summary>
+/// Represents the current state of the game.
+/// </summary>
 public enum GameState
 {
+    /// <summary>Game is being set up, not ready to play yet.</summary>
     Initializing,
+    /// <summary>Game is actively running, players can interact.</summary>
     Playing,
+    /// <summary>Game has ended, waiting for reset or exit.</summary>
     GameEnded
 }
 
+/// <summary>
+/// Main game orchestrator that coordinates all managers and controls the game lifecycle.
+/// Implements the Facade pattern to provide a single point of control for the entire game.
+/// </summary>
 public class GameScenario : MonoBehaviour
 {
     [Header("Managers")]
@@ -24,17 +34,30 @@ public class GameScenario : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField]
-    private float maxEpisodeTime = 600f;
+    private GameBalanceConfig balanceConfig;
 
-    [SerializeField]
-    private float absorptionInterval = 120f;
-
+    /// <summary>Gets the central event bus for game-wide event communication.</summary>
     public GameEventBus EventBus { get; private set; }
+
+    /// <summary>Gets the manager responsible for all game timers.</summary>
     public TimerManager TimerManager { get; private set; }
+
+    /// <summary>Gets the timer tracking total episode duration (until time expires).</summary>
     public GameTimer EpisodeTimer { get; private set; }
+
+    /// <summary>Gets the repeating timer for storage absorption events.</summary>
     public GameTimer AbsorptionTimer { get; private set; }
+
+    /// <summary>Gets the current game state (Initializing, Playing, or GameEnded).</summary>
     public GameState CurrentState { get; private set; } = GameState.Initializing;
 
+    /// <summary>Gets the active game balance configuration containing all tunable values.</summary>
+    public GameBalanceConfig BalanceConfig => balanceConfig;
+
+    /// <summary>
+    /// Initializes the game scenario and all dependent managers.
+    /// Called once at game startup by GameBootstrapper.
+    /// </summary>
     public void Initialize()
     {
         EventBus = new GameEventBus();
@@ -46,18 +69,32 @@ public class GameScenario : MonoBehaviour
         EventBus.Flow.OnGameEnded += OnGameEnded;
     }
 
+    /// <summary>
+    /// Starts a new episode (match/game session).
+    /// Resets timers, starts the level, and transitions to Playing state.
+    /// Can be called multiple times for episode restarts (e.g., pressing R key).
+    /// </summary>
     public void EpisodeBegin()
     {
         CurrentState = GameState.Playing;
-        // EventBus.Reset();
+
+        // NOTE: Do NOT call EventBus.Reset() here. Event handlers registered in Initialize()
+        // (GameScenario, MatchManager, LevelDirector) must persist across episodes.
+        // UIManager handles its own handler de-duplication via unsubscribe-before-subscribe pattern.
+
         TimerManager.Clear();
 
-        EpisodeTimer = TimerManager.AddTimer(maxEpisodeTime, false, () => EventBus.Flow.PublishTimeExpired());
-        AbsorptionTimer = TimerManager.AddTimer(absorptionInterval, true, () => EventBus.World.PublishAbsorption());
+        EpisodeTimer = TimerManager.AddTimer(balanceConfig.MaxEpisodeTime, false, () => EventBus.Flow.PublishTimeExpired());
+        AbsorptionTimer = TimerManager.AddTimer(balanceConfig.AbsorptionInterval, true, () => EventBus.World.PublishAbsorption());
 
         levelDirector.StartEpisode();
     }
 
+    /// <summary>
+    /// Updates the game state every frame while playing.
+    /// Ticks timers, updates level systems, and refreshes UI.
+    /// </summary>
+    /// <param name="deltaTime">Time elapsed since last frame in seconds.</param>
     public void EpisodeUpdate(float deltaTime)
     {
         if (CurrentState != GameState.Playing) return;
@@ -66,6 +103,13 @@ public class GameScenario : MonoBehaviour
         uiManager?.UpdateUI(EpisodeTimer, AbsorptionTimer);
     }
 
+    /// <summary>
+    /// Moves a specific unit based on input.
+    /// Called by PlayerUnitController or AI agents.
+    /// </summary>
+    /// <param name="unitIndex">Index of the unit to move (0-9 for 10 total units).</param>
+    /// <param name="moveInput">Normalized 2D movement direction vector.</param>
+    /// <param name="deltaTime">Time elapsed since last frame in seconds.</param>
     public void MoveUnit(int unitIndex, Vector2 moveInput, float deltaTime)
     {
         if (CurrentState != GameState.Playing) return;

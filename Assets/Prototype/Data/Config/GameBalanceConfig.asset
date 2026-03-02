@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10007d49ad3940d4885fed6cbc08429d, type: 3}
+  m_Name: GameBalanceConfig
+  m_EditorClassIdentifier: Assembly-CSharp::GameBalanceConfig
+  MaxEpisodeTime: 420
+  AbsorptionInterval: 80
+  TargetScore: 100
+  InitialBatteryTotalScore: 200
+  MinBatteryAmount: 1
+  MaxBatteryAmount: 8
+  StorageCountPerTeam: 4
+  SymmetricBatterySpawn: 0
+  SpecialItemSpawnCooldown: 15
+  ItemPoolInitialSize: 30
+  ItemPoolMaxSize: 150
+  VerboseLogging: 0
+  ShowDebugGizmos: 0

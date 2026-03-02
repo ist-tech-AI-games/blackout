@@ -43,9 +43,6 @@ public class ProceduralMapGenerator : MapGenerator
     private RegionData defaultRegion;
 
     [Header("Procedural Storages")]
-    [SerializeField]
-    private int storageCountPerTeam = 3;
-
     [Tooltip("A 팀 데이터만. 상대 팀은 자동으로 대칭 생성.")]
     [SerializeField]
     private List<RegionData> storageCandidatesA;
@@ -56,12 +53,6 @@ public class ProceduralMapGenerator : MapGenerator
 
     [SerializeField]
     private ItemData[] itemTypes;
-
-    [SerializeField]
-    private int targetTotalScore = 150;
-
-    [SerializeField]
-    private bool symmetricItems = true;
 
     private Dictionary<TileBase, MapTileData> tileDataLookup;
 
@@ -114,14 +105,13 @@ public class ProceduralMapGenerator : MapGenerator
 
         int currentScore = 0;
 
-        while (currentScore < targetTotalScore && validPositions.Count > 0)
+        while (currentScore < BalanceConfig.InitialBatteryTotalScore && validPositions.Count > 0)
         {
             int idx = Random.Range(0, validPositions.Count);
             Vector2Int posA = validPositions[idx];
             validPositions.RemoveAt(idx);
 
-            // TODO: refactor
-            int amount = Random.Range(1, 6);
+            int amount = Random.Range(BalanceConfig.MinBatteryAmount, BalanceConfig.MaxBatteryAmount + 1);
 
             // TODO: extend to use other item types
             ItemData data = itemTypes[0];
@@ -130,7 +120,7 @@ public class ProceduralMapGenerator : MapGenerator
             spawnItemCallback(data, amount, posA);
             currentScore += amount;
 
-            if (symmetricItems)
+            if (BalanceConfig.SymmetricBatterySpawn)
             {
                 Vector2Int posB = new(posA.y, posA.x);
 
@@ -147,7 +137,7 @@ public class ProceduralMapGenerator : MapGenerator
     private void GenerateProceduralWarehouses(List<MapRegion> regions, MapTile[,] mapTiles)
     {
         var shuffled = storageCandidatesA.OrderBy(x => Random.value).ToList();
-        int count = Mathf.Min(storageCountPerTeam, shuffled.Count);
+        int count = Mathf.Min(BalanceConfig.StorageCountPerTeam, shuffled.Count);
 
         for (int i = 0; i < count; i++)
         {

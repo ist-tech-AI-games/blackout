@@ -472,7 +472,6 @@ MonoBehaviour:
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
     IsLocked: 0
-  storageCountPerTeam: 3
   storageCandidatesA:
   - Name: Storage_A2
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
@@ -536,8 +535,6 @@ MonoBehaviour:
   itemTileFilter: {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
   itemTypes:
   - {fileID: 11400000, guid: 23c7f56fb5cdc624882b96a622870993, type: 2}
-  targetTotalScore: 250
-  symmetricItems: 0
 --- !u!1 &81047746
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,12 +900,9 @@ MonoBehaviour:
   mapGenerator: {fileID: 39173976}
   itemPrefab: {fileID: 1107078259204203219, guid: 49ffdf38c82c0314ea9a8032329915a8, type: 3}
   itemParent: {fileID: 606146320}
-  initialPoolSize: 30
-  maxPoolSize: 150
   specialItemPrototypes:
   - {fileID: 11400000, guid: f8624c08aeac3f94db43bb6ece59dc5a, type: 2}
   - {fileID: 11400000, guid: c04d6da18dffca64681c46b8902ab390, type: 2}
-  spawnCooldown: 5
   spawnItemTileFilter: {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
 --- !u!114 &115036438
 MonoBehaviour:
@@ -926,7 +920,6 @@ MonoBehaviour:
   <TeamA>k__BackingField: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
   <TeamB>k__BackingField: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
   <NeutralTeam>k__BackingField: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
-  targetScore: 100
   defaultUnitData: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
   units:
   - {fileID: 1245834323}
@@ -16704,8 +16697,7 @@ MonoBehaviour:
   levelDirector: {fileID: 115036437}
   mapManager: {fileID: 39173974}
   uiManager: {fileID: 1460599321}
-  maxEpisodeTime: 240
-  absorptionInterval: 60
+  balanceConfig: {fileID: 11400000, guid: 0bbc7613c5b86cd4a970b7cfc8023ed3, type: 2}
 --- !u!1001 &1968177648282763629
 PrefabInstance:
   m_ObjectHideFlags: 0

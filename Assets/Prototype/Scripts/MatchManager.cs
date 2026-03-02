@@ -19,7 +19,6 @@ public class MatchManager : MonoBehaviour
 
     [field: SerializeField]
     public TeamData NeutralTeam { get; private set; }
-    [SerializeField] private int targetScore = 100;
 
     [SerializeField]
     private UnitData defaultUnitData;
@@ -30,10 +29,12 @@ public class MatchManager : MonoBehaviour
 
     private Dictionary<TeamData, TeamContext> teamContextTable;
     private GameEventBus eventBus;
+    private GameBalanceConfig balanceConfig;
 
     public void Initialize(GameScenario scenario)
     {
         eventBus = scenario.EventBus;
+        balanceConfig = scenario.BalanceConfig;
         teamContextTable = new()
         {
             { TeamA, new(TeamA) },
@@ -93,7 +94,7 @@ public class MatchManager : MonoBehaviour
     {
         if (context.Team == NeutralTeam) return;
 
-        if (context.Score >= targetScore)
+        if (context.Score >= balanceConfig.TargetScore)
         {
             eventBus.Flow.PublishGameEnded(context.Team);
             Debug.Log($"Game Ended! Winner: {context.Team.name}");

@@ -30,18 +30,9 @@ public class LevelDirector : MonoBehaviour
     [SerializeField]
     private Transform itemParent;
 
-    [SerializeField]
-    private int initialPoolSize = 30;
-
-    [SerializeField]
-    private int maxPoolSize = 150;
-
     [Header("Dynamic Spawning")]
     [SerializeField]
     private List<ItemData> specialItemPrototypes;
-
-    [SerializeField]
-    private float spawnCooldown = 15f;
 
     [SerializeField]
     private MapTileData spawnItemTileFilter;
@@ -63,6 +54,9 @@ public class LevelDirector : MonoBehaviour
         this.gameScenario = gameScenario;
         eventBus = gameScenario.EventBus;
 
+        // Configure map generator with balance settings
+        mapGenerator.SetConfig(gameScenario.BalanceConfig);
+
         itemPool = new ObjectPool<ItemObject>(
             createFunc: CreateItem,
             actionOnGet: OnGetItem,
@@ -73,8 +67,8 @@ public class LevelDirector : MonoBehaviour
 #else
             collectionCheck: false,
 #endif
-            defaultCapacity: initialPoolSize,
-            maxSize: maxPoolSize
+            defaultCapacity: gameScenario.BalanceConfig.ItemPoolInitialSize,
+            maxSize: gameScenario.BalanceConfig.ItemPoolMaxSize
         );
 
         eventBus.Flow.OnGameEnded += (winner) => EndEpisode();
@@ -188,7 +182,7 @@ public class LevelDirector : MonoBehaviour
 
         currentSpawnTimer += dt;
 
-        if (currentSpawnTimer >= spawnCooldown)
+        if (currentSpawnTimer >= gameScenario.BalanceConfig.SpecialItemSpawnCooldown)
         {
             SpawnSpecialItem();
             currentSpawnTimer = 0f;
@@ -211,7 +205,7 @@ public class LevelDirector : MonoBehaviour
         MapTile targetTile = mapManager.GetRandomTile(FilterAvailableSpawnPos);
         if (targetTile == null)
         {
-            currentSpawnTimer = spawnCooldown - 1f; // 재시도
+            currentSpawnTimer = gameScenario.BalanceConfig.SpecialItemSpawnCooldown - 1f; // 재시도
             return;
         }
 

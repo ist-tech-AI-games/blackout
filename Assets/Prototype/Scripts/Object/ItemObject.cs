@@ -246,7 +246,7 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
     private List<TeamContext> ResolveTargetContexts(EffectTargetStrategy strategy, TeamContext ownerContext)
     {
         var results = new List<TeamContext>();
-        if (matchManager == null) return results;
+        if (matchManager == null || ownerContext == null) return results;
 
         switch (strategy)
         {
@@ -255,9 +255,15 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
                 break;
 
             case EffectTargetStrategy.OpponentTeam:
-                var enemyData = matchManager.OpponentTeam(ownerContext.Team);
-                var enemyCtx = matchManager.GetTeamContext(enemyData);
-                if (enemyCtx != null) results.Add(enemyCtx);
+                if (ownerContext.Team != null)
+                {
+                    var enemyData = matchManager.OpponentTeam(ownerContext.Team);
+                    if (enemyData != null)
+                    {
+                        var enemyCtx = matchManager.GetTeamContext(enemyData);
+                        if (enemyCtx != null) results.Add(enemyCtx);
+                    }
+                }
                 break;
 
             case EffectTargetStrategy.AllTeams:
