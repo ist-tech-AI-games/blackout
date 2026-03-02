@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Manages map data, tile queries, and collision detection.
+/// Provides interfaces for tile access, walkability checks, and coordinate conversions.
+/// Uses pre-computed tile cache for efficient random tile selection.
+/// </summary>
 public class MapManager : MonoBehaviour, IMapInteractionContext
 {
     [Header("References")]
@@ -10,11 +15,19 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     [SerializeField] private TeamAreaViewer teamAreaViewer;
 
     private MapData mapData;
+
+    /// <summary>
+    /// Provides spawn points and region information for the current map.
+    /// </summary>
     public MapSpaceInfo MapSpaceInfo => mapData?.MapSpaceInfo;
 
     // Pre-computed tile cache for efficient random sampling
     private List<MapTile> allTilesCache;
 
+    /// <summary>
+    /// Initializes map manager with map data and builds tile cache.
+    /// </summary>
+    /// <param name="mapData">Map data containing tile information and regions.</param>
     public void Initialize(MapData mapData)
     {
         this.mapData = mapData;
@@ -45,8 +58,19 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
         }
     }
 
+    /// <summary>
+    /// Converts cell coordinates to world position (center of tile).
+    /// </summary>
+    /// <param name="cellPos">Cell position in grid coordinates.</param>
+    /// <returns>World position at the center of the tile.</returns>
     public Vector3 CellToCenterWorld(Vector2Int cellPos) => tilemap.GetCellCenterWorld((Vector3Int)cellPos);
 
+    /// <summary>
+    /// Gets the collision bound for a tile at the given position.
+    /// Returns default square bound if tile doesn't exist.
+    /// </summary>
+    /// <param name="cellPos">Cell position to query.</param>
+    /// <returns>Collision bound of the tile.</returns>
     public CollisionBound GetTileCollisionBound(Vector2Int cellPos)
     {
         var tile = GetTile(cellPos);
@@ -54,6 +78,13 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
                             : new CollisionBound { Type = CollisionBoundType.Square, Width = 1 };
     }
 
+    /// <summary>
+    /// Checks if a tile is walkable for the given team.
+    /// Considers tile collision options (Pass, BlockFriendly, BlockEnemy, BlockAll).
+    /// </summary>
+    /// <param name="cellPos">Cell position to check.</param>
+    /// <param name="team">Team requesting walkability check.</param>
+    /// <returns>True if the team can walk on this tile.</returns>
     public bool IsWalkable(Vector2Int cellPos, TeamData team)
     {
         MapTile tile = GetTile(cellPos);
@@ -73,14 +104,34 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
         }
     }
 
+    /// <summary>
+    /// Converts world position to cell coordinates.
+    /// </summary>
+    /// <param name="worldPos">World position to convert.</param>
+    /// <returns>Cell position in grid coordinates.</returns>
     public Vector2Int WorldToCell(Vector3 worldPos) => (Vector2Int)tilemap.WorldToCell(worldPos);
 
+    /// <summary>
+    /// Gets all map objects at the given cell position.
+    /// </summary>
+    /// <param name="cellPos">Cell position to query.</param>
+    /// <returns>List of map objects at the position, or null if tile doesn't exist.</returns>
     public List<IMapObject> GetObjectsAt(Vector2Int cellPos) => GetTile(cellPos)?.MapObjects;
 
     // helpers
 
+    /// <summary>
+    /// Gets the tile at the given cell position.
+    /// </summary>
+    /// <param name="cellPos">Cell position to query.</param>
+    /// <returns>Map tile at the position, or null if out of bounds.</returns>
     public MapTile GetTile(Vector2Int cellPos) => mapData?.GetTile(cellPos.x, cellPos.y);
 
+    /// <summary>
+    /// Gets the tile at the given world position.
+    /// </summary>
+    /// <param name="worldPos">World position to query.</param>
+    /// <returns>Map tile at the position, or null if out of bounds.</returns>
     public MapTile GetTileAtWorldPos(Vector3 worldPos) => GetTile(WorldToCell(worldPos));
 
     /// <summary>

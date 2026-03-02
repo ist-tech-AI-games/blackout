@@ -2,21 +2,48 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Represents a controllable unit (Worker, Guard, Carrier) in the game.
+/// Handles movement, item interaction, class transformation, and stat calculations with caching.
+/// Subscribes to team modifier events for automatic stat cache invalidation.
+/// </summary>
 public class Unit : MonoBehaviour, IMapObject, IResettable
 {
-    // Events
+    /// <summary>
+    /// Invoked when the unit's class (UnitData) changes.
+    /// </summary>
     public event Action<UnitData> OnClassChanged;
+
+    /// <summary>
+    /// Invoked when the unit dies.
+    /// </summary>
     public event Action<Unit> OnUnitDead;
 
+    /// <summary>
+    /// Current unit class data (Worker, Guard, or Carrier).
+    /// </summary>
     [field: SerializeField]
     public UnitData UnitData { get; private set; }
 
+    /// <summary>
+    /// Team this unit belongs to (Team A or Team B).
+    /// </summary>
     [field: SerializeField]
     public TeamData Team { get; private set; }
 
+    /// <summary>
+    /// Collision bound from the current unit class.
+    /// </summary>
     public CollisionBound CollisionBound => UnitData.CollisionBound;
+
+    /// <summary>
+    /// Current world position of the unit.
+    /// </summary>
     public Vector2 GlobalPos => transform.position;
 
+    /// <summary>
+    /// The tile this unit is currently on.
+    /// </summary>
     public MapTile OwnedTile { get; set; }
 
     [SerializeField]
@@ -32,8 +59,15 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     // Stat caching for performance
     private Dictionary<StatType, float> cachedStats = new Dictionary<StatType, float>();
 
+    /// <summary>
+    /// The item currently held by this unit, or null if not holding any item.
+    /// </summary>
     public ItemObject HoldingItem { get; private set; } = null;
 
+    /// <summary>
+    /// Current movement speed including team modifiers.
+    /// Uses cached stat calculation for performance.
+    /// </summary>
     public float MoveSpeed
     {
         get
@@ -78,6 +112,12 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         cachedStats.Clear();
     }
 
+    /// <summary>
+    /// Initializes the unit with required dependencies.
+    /// Sets up movement and interaction systems, subscribes to team modifier events.
+    /// </summary>
+    /// <param name="matchManager">Match manager for team context access.</param>
+    /// <param name="mapManager">Map manager for movement calculations.</param>
     public void Initialize(MatchManager matchManager, MapManager mapManager)
     {
         this.matchManager = matchManager;
@@ -103,6 +143,10 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         InvalidateStatCache();
     }
 
+    /// <summary>
+    /// Resets unit state to initial condition.
+    /// Destroys held item, reactivates game object, and clears stat cache.
+    /// </summary>
     public void ResetState()
     {
         if (HoldingItem != null)
@@ -131,9 +175,12 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     }
 
     /// <summary>
-    /// 성소가 요청. 조건이 맞으면 변신.
+    /// Attempts to transform this unit to a different class.
+    /// Called by Sanctuary regions when unit enters.
     /// </summary>
-    /// <returns>변신 성공 여부</returns>
+    /// <param name="requiredInput">Required current class for transformation.</param>
+    /// <param name="targetOutput">Target class after transformation.</param>
+    /// <returns>True if transformation succeeded (unit had required class).</returns>
     public bool TryTransform(UnitData requiredInput, UnitData targetOutput)
     {
         if (UnitData != requiredInput)
@@ -144,8 +191,10 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     }
 
     /// <summary>
-    /// 창고가 요청. 들고 있는 아이템 가져 옴 (이전. 대여 아님.)
+    /// Retrieves the item currently held by this unit.
+    /// Called by Storage regions to take the item (transfer, not borrow).
     /// </summary>
+    /// <returns>The held item, or null if not holding any item.</returns>
     public ItemObject RetrieveItem()
     {
         if (HoldingItem == null)
@@ -158,6 +207,12 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         return item;
     }
 
+    /// <summary>
+    /// Changes the unit's class (Worker, Guard, Carrier).
+    /// Destroys held item if new class can't collect items.
+    /// Invalidates stat cache and invokes OnClassChanged event.
+    /// </summary>
+    /// <param name="unitData">New unit class data to apply.</param>
     public void SetUnitClass(UnitData unitData)
     {
         UnitData = unitData;
@@ -170,6 +225,12 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         OnClassChanged?.Invoke(unitData);
     }
 
+    /// <summary>
+    /// Moves the unit based on input direction and delta time.
+    /// Handles collision detection and processes tile/region interactions.
+    /// </summary>
+    /// <param name="input">Movement input direction (will be normalized).</param>
+    /// <param name="deltaTime">Time delta for frame-rate independent movement.</param>
     public void Move(Vector2 input, float deltaTime)
     {
         Vector2 targetPosition = unitMovementSystem.CalculateNextPosition(
@@ -181,7 +242,11 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         unitInteractionSystem.ProcessInteractions(targetPosition);
     }
 
-    // NOTE: This does not check for the tile collision, so DON'T teleport to blocking tile.
+    /// <summary>
+    /// Teleports the unit to a specific cell position.
+    /// WARNING: Does not check tile collision - ensure target position is valid before calling.
+    /// </summary>
+    /// <param name="pos">Cell position to teleport to.</param>
     public void Teleport(Vector2Int pos)
     {
         Vector2 worldPos = mapManager.CellToCenterWorld(pos);
@@ -211,6 +276,11 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         transform.position = targetPosition;
     }
 
+    /// <summary>
+    /// Handles overlap interaction with other map objects.
+    /// Currently only handles item pickup interaction.
+    /// </summary>
+    /// <param name="other">The map object this unit overlapped with.</param>
     public void OnOverlapped(IMapObject other)
     {
         if (other is ItemObject item)
@@ -229,6 +299,10 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
         }
     }
 
+    /// <summary>
+    /// Handles unit death by destroying held item and triggering respawn.
+    /// Publishes unit death event and invokes OnUnitDead.
+    /// </summary>
     public void Die()
     {
         Debug.Log($"{gameObject.name} dead");

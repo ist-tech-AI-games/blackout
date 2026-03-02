@@ -5,8 +5,16 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Random = UnityEngine.Random;
 
+/// <summary>
+/// Orchestrates level/episode lifecycle, map generation, and item spawning.
+/// Manages object pooling for items, handles absorption intervals, and spawns special items dynamically.
+/// Publishes episode started events for UI and other systems to initialize.
+/// </summary>
 public class LevelDirector : MonoBehaviour
 {
+    /// <summary>
+    /// Invoked when a level is initialized and ready for play.
+    /// </summary>
     public event Action<MatchManager> OnLevelInitialized;
 
     [Header("Core Systems")]
@@ -46,6 +54,11 @@ public class LevelDirector : MonoBehaviour
     private ItemObject currentSpecialItem;
     private float currentSpawnTimer = 0f;
 
+    /// <summary>
+    /// Initializes the level director with game scenario settings.
+    /// Configures map generator, creates item object pool, and subscribes to game events.
+    /// </summary>
+    /// <param name="gameScenario">Game scenario containing balance config and event bus.</param>
     public void Initialize(GameScenario gameScenario)
     {
         this.gameScenario = gameScenario;
@@ -73,17 +86,30 @@ public class LevelDirector : MonoBehaviour
     }
 
     // === Episode Lifecycle ===
+
+    /// <summary>
+    /// Starts a new episode by performing reset.
+    /// Called by GameScenario when starting an episode.
+    /// </summary>
     public void StartEpisode()
     {
         PerformReset();
     }
 
+    /// <summary>
+    /// Ends the current episode.
+    /// Stops gameplay updates (special item spawning).
+    /// </summary>
     public void EndEpisode()
     {
         if (isGamePlaying)
             isGamePlaying = false;
     }
 
+    /// <summary>
+    /// Manual late update for frame-rate independent logic.
+    /// Updates special item spawner when game is playing.
+    /// </summary>
     public void ManualLateUpdate()
     {
         if (!isGamePlaying) return;
@@ -118,6 +144,10 @@ public class LevelDirector : MonoBehaviour
 
     // === Event Handlers ===
 
+    /// <summary>
+    /// Handles absorption interval events by absorbing items in storage regions.
+    /// Called periodically based on game timer.
+    /// </summary>
     private void OnAbsorption()
     {
         Debug.Log("Absorption(is Game playing?)");
@@ -137,7 +167,13 @@ public class LevelDirector : MonoBehaviour
 
     // === Item Spawning (Public Interface) ===
 
-    // Generator가 호출
+    /// <summary>
+    /// Spawns an item at the specified cell position.
+    /// Called by MapGenerator during map initialization.
+    /// </summary>
+    /// <param name="data">Item data configuration.</param>
+    /// <param name="amount">Initial stack amount.</param>
+    /// <param name="cellPos">Cell position to spawn at.</param>
     public void SpawnItem(ItemData data, int amount, Vector2Int cellPos)
     {
         ItemObject item = itemPool.Get();
@@ -147,6 +183,10 @@ public class LevelDirector : MonoBehaviour
 
     // === Pooling Callbacks ===
 
+    /// <summary>
+    /// Object pool callback for creating new item instances.
+    /// </summary>
+    /// <returns>Newly created and initialized item object.</returns>
     private ItemObject CreateItem()
     {
         ItemObject item = Instantiate(itemPrefab, itemParent);
@@ -154,18 +194,32 @@ public class LevelDirector : MonoBehaviour
         return item;
     }
 
+    /// <summary>
+    /// Object pool callback when retrieving an item from the pool.
+    /// Resets item state and adds to active items tracking.
+    /// </summary>
+    /// <param name="item">Item being retrieved from pool.</param>
     private void OnGetItem(ItemObject item)
     {
         item.ResetState();
         activeItems.Add(item);
     }
 
+    /// <summary>
+    /// Object pool callback when returning an item to the pool.
+    /// Deactivates item and removes from active items tracking.
+    /// </summary>
+    /// <param name="item">Item being returned to pool.</param>
     private void OnReleaseItem(ItemObject item)
     {
         item.gameObject.SetActive(false);
         activeItems.Remove(item);
     }
 
+    /// <summary>
+    /// Object pool callback when destroying an item beyond pool capacity.
+    /// </summary>
+    /// <param name="item">Item to destroy.</param>
     private void OnDestroyItem(ItemObject item)
     {
         Destroy(item.gameObject);
@@ -173,6 +227,11 @@ public class LevelDirector : MonoBehaviour
 
     // ===== Dynamic Spawning =====
 
+    /// <summary>
+    /// Updates special item spawner timer and spawns items on cooldown.
+    /// Called from ManualLateUpdate when game is playing.
+    /// </summary>
+    /// <param name="dt">Delta time for this frame.</param>
     private void UpdateSpecialItemSpawner(float dt)
     {
         if (currentSpecialItem != null && currentSpecialItem.gameObject.activeSelf)
@@ -187,13 +246,22 @@ public class LevelDirector : MonoBehaviour
         }
     }
 
-    // 지정된 유형의 공역 타일이며 다른 아이템이 없을 것.
-    private bool FilterAvailableSpawnPos(MapTile mapTile) => 
+    /// <summary>
+    /// Filters tiles for special item spawning.
+    /// Returns true if tile is in neutral region, matches spawn filter type, and has no items.
+    /// </summary>
+    /// <param name="mapTile">Tile to check.</param>
+    /// <returns>True if tile is available for special item spawning.</returns>
+    private bool FilterAvailableSpawnPos(MapTile mapTile) =>
         !matchManager.GetPlayableTeamContexts()
-            .Contains(matchManager.GetTeamContext(mapTile.OwnedRegion.OwnedTeam)) 
+            .Contains(matchManager.GetTeamContext(mapTile.OwnedRegion.OwnedTeam))
         && mapTile.TileData == spawnItemTileFilter
         && !mapTile.MapObjects.Any(obj => obj is ItemObject);
 
+    /// <summary>
+    /// Spawns a random special item at a valid neutral location.
+    /// Called when special item spawn timer reaches cooldown threshold.
+    /// </summary>
     private void SpawnSpecialItem()
     {
         if (specialItemPrototypes == null || specialItemPrototypes.Count == 0) return;

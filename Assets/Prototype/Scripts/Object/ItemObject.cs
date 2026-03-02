@@ -3,25 +3,61 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
+/// <summary>
+/// Represents an item (battery, buff item, etc.) in the game world.
+/// Manages item state transitions (OnGround, Carried, InPool) and applies effects when entering/exiting storage.
+/// Uses object pooling for efficient spawning/despawning.
+/// Tracks applied modifiers for proper cleanup on state changes.
+/// </summary>
 public class ItemObject : MonoBehaviour, IMapObject, IResettable
 {
+    /// <summary>
+    /// Invoked when item data or amount changes.
+    /// </summary>
     public event Action<ItemData, int> OnDataUpdated;
 
+    /// <summary>
+    /// Possible states for an item object.
+    /// </summary>
     public enum ItemState
     {
+        /// <summary>Item is on the ground (can be picked up).</summary>
         OnGround,
+        /// <summary>Item is being carried by a unit.</summary>
         Carried,
+        /// <summary>Item is in the object pool (inactive).</summary>
         InPool
     }
 
     [Header("Data")]
+    /// <summary>
+    /// Configuration data for this item (Battery, Buff Item, etc.).
+    /// </summary>
     [field: SerializeField] public ItemData ItemData { get; private set; }
+
+    /// <summary>
+    /// Current stack amount of this item.
+    /// </summary>
     [field: SerializeField] public int ItemAmount { get; private set; } = 1;
 
-    // Properties
+    /// <summary>
+    /// Collision bound from the item data.
+    /// </summary>
     public CollisionBound CollisionBound => ItemData != null ? ItemData.CollisionBound : default;
+
+    /// <summary>
+    /// Current world position of the item.
+    /// </summary>
     public Vector2 GlobalPos => transform.position;
+
+    /// <summary>
+    /// The tile this item is currently on.
+    /// </summary>
     public MapTile OwnedTile { get; private set; }
+
+    /// <summary>
+    /// Current state of this item object.
+    /// </summary>
     public ItemState State { get; private set; } = ItemState.InPool;
 
     // Internal State
@@ -32,13 +68,28 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
     private Transform worldParent;
     private List<(TeamContext context, StatModifier modifier)> appliedModifiers = new();
 
-    // Debug inspection
+    /// <summary>
+    /// Gets the team context this item is currently applied to (for debug/inspection).
+    /// </summary>
     public TeamContext CurrentAppliedContext => currentAppliedContext;
+
+    /// <summary>
+    /// Gets all modifiers currently applied by this item (for debug/inspection).
+    /// </summary>
+    /// <returns>Read-only list of applied modifiers with their target contexts.</returns>
     public IReadOnlyList<(TeamContext context, StatModifier modifier)> GetAppliedModifiers()
         => appliedModifiers.AsReadOnly();
 
     // ===== Initialization & Lifecycle =====
 
+    /// <summary>
+    /// Initializes the item object with required dependencies.
+    /// Called once when the item is created in the object pool.
+    /// </summary>
+    /// <param name="matchManager">Match manager for team context access.</param>
+    /// <param name="mapManager">Map manager for tile positioning.</param>
+    /// <param name="pool">Object pool managing this item.</param>
+    /// <param name="worldParent">Transform parent for items on the ground.</param>
     public void Initialize(MatchManager matchManager, MapManager mapManager, IObjectPool<ItemObject> pool, Transform worldParent)
     {
         this.matchManager = matchManager;
@@ -47,6 +98,10 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
         this.worldParent = worldParent;
     }
 
+    /// <summary>
+    /// Resets item state when retrieved from object pool.
+    /// Clears applied context and sets state to OnGround.
+    /// </summary>
     public void ResetState()
     {
         State = ItemState.OnGround;
@@ -55,7 +110,13 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
         gameObject.SetActive(true);
     }
 
-    // 맵 생성 시 최초 배치
+    /// <summary>
+    /// Registers the item to the map at a specific position.
+    /// Called when spawning items during map generation.
+    /// </summary>
+    /// <param name="itemData">Item configuration data.</param>
+    /// <param name="amount">Initial stack amount.</param>
+    /// <param name="cellPos">Cell position to spawn at.</param>
     public void RegisterToMap(ItemData itemData, int amount, Vector2Int cellPos)
     {
         ItemData = itemData;
@@ -77,6 +138,11 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
 
     // ===== State Machine =====
 
+    /// <summary>
+    /// Handles item being picked up by a unit.
+    /// Transitions state to Carried and removes from map.
+    /// </summary>
+    /// <param name="unit">Unit that picked up this item.</param>
     public void OnPickedUp(Unit unit)
     {
         if (State == ItemState.Carried) return;
@@ -89,18 +155,32 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
         State = ItemState.Carried;
     }
 
+    /// <summary>
+    /// Handles item being dropped onto a tile.
+    /// Transitions state to OnGround and updates position.
+    /// </summary>
+    /// <param name="targetTile">Tile to drop the item on.</param>
     public void OnDropped(MapTile targetTile)
     {
         State = ItemState.OnGround;
         MoveToTile(targetTile);
     }
 
+    /// <summary>
+    /// Handles item being absorbed by storage.
+    /// Applies exit effects with Absorbed reason, then destroys without re-applying effects.
+    /// </summary>
     public void OnAbsorbed()
     {
         ExitCurrentRegion(ItemExitReason.Absorbed);
         OnDestroyed(skipEffect: true);
     }
 
+    /// <summary>
+    /// Destroys the item and returns it to the object pool.
+    /// Applies exit effects unless skipEffect is true.
+    /// </summary>
+    /// <param name="skipEffect">If true, skips effect application (used after absorption).</param>
     public void OnDestroyed(bool skipEffect = false)
     {
         if (!gameObject.activeSelf || State == ItemState.InPool)
@@ -118,6 +198,11 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
 
     // ===== Logic & Data Modification =====
 
+    /// <summary>
+    /// Updates the item's stack amount.
+    /// Re-applies effects with new amount using Refresh exit reason.
+    /// </summary>
+    /// <param name="newAmount">New stack amount to set.</param>
     public void UpdateAmount(int newAmount)
     {
         if (newAmount == ItemAmount) return;
@@ -264,6 +349,12 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
         // Debug.Log($"[ItemObject] Removed modifier {modifier.Type} {modifier.Operation} {modifier.Value} from {targetContext.Team.name}. Total tracked: {appliedModifiers.Count}");
     }
 
+    /// <summary>
+    /// Checks if this item can be interacted with (picked up) by the given team.
+    /// Considers item's interaction option (All, IgnoreFriend, IgnoreEnemy) and current tile ownership.
+    /// </summary>
+    /// <param name="team">Team requesting interaction.</param>
+    /// <returns>True if the team can interact with this item.</returns>
     public bool IsInteractable(TeamData team)
     {
         if (ItemData == null) return false;
@@ -286,5 +377,10 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
 
     // ===== Interface Implementations =====
 
+    /// <summary>
+    /// Handles overlap interaction with other map objects.
+    /// Currently no interaction logic needed for items.
+    /// </summary>
+    /// <param name="other">The map object this item overlapped with.</param>
     public void OnOverlapped(IMapObject other) { /* No interaction logic needed here yet */ }
 }
