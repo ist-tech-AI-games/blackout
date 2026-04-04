@@ -10,12 +10,12 @@
 
 | 타입 | 경로 | 설명 |
 |------|------|------|
-| GameBalanceConfig | `Assets/Settings/` | 전역 게임 설정 |
-| UnitData | `Assets/Data/Units/` | 유닛 클래스 (Worker, Guard, Carrier) |
-| ItemData | `Assets/Data/Items/` | 아이템 (Battery, Buff) |
-| TeamData | `Assets/Data/Teams/` | 팀 설정 |
-| MapTileData | `Assets/Data/Tiles/` | 타일 설정 |
-| ItemEffect | `Assets/Data/Effects/` | 아이템 효과 |
+| GameBalanceConfig | `Assets/Project/Runtime/Resources/ScriptableObjects/Config/` | 전역 게임 설정 |
+| UnitData | `Assets/Project/Runtime/Resources/ScriptableObjects/UnitData/` | 유닛 클래스 (Worker, Guard, Carrier) |
+| ItemData | `Assets/Project/Runtime/Resources/ScriptableObjects/ItemData/` | 아이템 (Battery, Buff) |
+| TeamData | `Assets/Project/Runtime/Resources/ScriptableObjects/Teams/` | 팀 설정 |
+| MapTileData | `Assets/Project/Runtime/Resources/ScriptableObjects/MapTileData/` | 타일 설정 |
+| ItemEffect | `Assets/Project/Runtime/Resources/ScriptableObjects/ItemEffects/` | 아이템 효과 |
 
 ---
 
