@@ -44,7 +44,7 @@ ScriptableObject 생성 및 설정
 4. WASD 선택한 유닛 이동(선택 유닛 없으면 카메라 이동)
 
 ### 2. 밸런스 조정
-1. `Assets/Settings/GameBalanceConfig.asset` 열기
+1. `Assets/Project/Runtime/Resources/ScriptableObjects/Config/GameBalanceConfig.asset` 열기
 2. 목표 점수, 타이머 등 수정
 3. 저장 후 Play 모드에서 테스트
 
