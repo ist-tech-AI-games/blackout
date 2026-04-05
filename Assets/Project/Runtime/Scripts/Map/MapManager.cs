@@ -21,6 +21,20 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     /// </summary>
     public MapSpaceInfo MapSpaceInfo => mapData?.MapSpaceInfo;
 
+    /// <summary>Width of the current map in tiles.</summary>
+    public int MapWidth => mapData?.Width ?? 0;
+
+    /// <summary>Height of the current map in tiles.</summary>
+    public int MapHeight => mapData?.Height ?? 0;
+
+    /// <summary>
+    /// World-space position of the bottom-left corner of the map.
+    /// Used as origin for absolute position normalization in ML observations.
+    /// </summary>
+    public Vector2 MapOriginWorld => mapData != null
+        ? (Vector2)tilemap.CellToWorld((Vector3Int)mapData.MapSpaceInfo.BottomLeft)
+        : Vector2.zero;
+
     // Pre-computed tile cache for efficient random sampling
     private List<MapTile> allTilesCache;
 
