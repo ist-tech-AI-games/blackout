@@ -102,3 +102,6 @@ InitTestScene*.unity*
 
 
 docs/
+
+# ML-Agents auto-generated timer logs
+/[Aa]ssets/ML-Agents/Timers/
