@@ -417,7 +417,14 @@ OnValidate()가 자동으로 확인:
    - `MapGenerator` 스크립트 또는
    - `LevelDirector.specialItemPrototypes` 배열에 추가
 
-4. **테스트**
+4. **ML 관련 업데이트 (ML 학습 씬 사용 시)**
+   - `BlackOutEpisodeCoordinator` Inspector → **Known Items** 배열 끝에 새 ItemData 추가
+   - `SemanticMapRenderer` Inspector → **Known Items** 배열 끝에 동일하게 추가
+   - 두 배열의 순서가 일치해야 함 (인덱스 = holdingItemId - 1)
+   - `Assets/StreamingAssets/semantic_map_config.json`의 `item_id_offset`은 변경 불필요 (6 고정)
+   - Python `BlackOutEnvWrapper`의 `N_ITEMS` 상수를 새 아이템 수에 맞게 수정
+
+5. **테스트**
    - Play 모드에서 Shield 수집
    - Guard 속도 확인 (3.5 → 7.0)
 
@@ -467,6 +474,9 @@ OnValidate()가 자동으로 확인:
 - [ ] 모든 TierSprite 할당
 - [ ] Effects 할당
 - [ ] OnValidate 경고 없음
+- [ ] (ML 사용 시) `BlackOutEpisodeCoordinator` Known Items 배열에 추가
+- [ ] (ML 사용 시) `SemanticMapRenderer` Known Items 배열에 동일 순서로 추가
+- [ ] (ML 사용 시) Python `BlackOutEnvWrapper`의 `N_ITEMS` 수정
 
 ### BuffItemEffect 생성 시
 - [ ] TargetStrategy 선택 (의도 확인)
