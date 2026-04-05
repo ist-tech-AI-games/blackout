@@ -3,11 +3,12 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
+using SensorCompressionType = Unity.MLAgents.Sensors.SensorCompressionType;
 
 /// <summary>
 /// ML-Agents Agent for a single unit in Black Out.
 /// 10 instances run in parallel (5 per team), sharing behavior name "BlackOutUnit".
-/// Behavior Parameters: Vector Observation Size=46, Continuous Actions=2, TeamId=0(A)/1(B).
+/// Behavior Parameters: Vector Observation Size=44, Continuous Actions=2, TeamId=0(A)/1(B).
 /// </summary>
 public class BlackOutAgent : Agent
 {
@@ -42,6 +43,19 @@ public class BlackOutAgent : Agent
         onOpponentScored = score => { if (score > 0) AddReward(-0.1f); };
         myTeamCtx.OnScoreChanged += onMyTeamScored;
         opponentCtx.OnScoreChanged += onOpponentScored;
+
+        // Assign the correct team-perspective RenderTexture to the sensor.
+        // Must be done here (Awake phase) before Agent.OnEnable() calls InitializeSensors().
+        var rtSensor = GetComponent<RenderTextureSensorComponent>();
+        if (rtSensor != null)
+        {
+            SemanticMapRenderer renderer = episodeCoordinator.SemanticMapRenderer;
+            rtSensor.RenderTexture = unit.Team == matchManager.TeamA
+                ? renderer.RenderTextureTeamA
+                : renderer.RenderTextureTeamB;
+            rtSensor.Grayscale = true;
+            rtSensor.CompressionType = SensorCompressionType.None;
+        }
     }
 
     /// <summary>
@@ -54,31 +68,34 @@ public class BlackOutAgent : Agent
     }
 
     /// <summary>
-    /// Collects 46-float observation vector.
-    /// Layout: [0-39] per-unit block ×10 (relPos×2, teamSign, holdingItem),
-    ///         [40-42] self class one-hot, [43] own score, [44] opp score, [45] time remaining.
+    /// Collects 44-float observation vector.
+    /// Layout: [0-39] per-unit block ×10 (absPos×2, teamSign, holdingItemId),
+    ///         [40] self classId, [41] own score, [42] opp score, [43] time remaining.
+    /// absPos = (globalPos - mapOrigin) / mapBounds, normalized to [0,1].
+    /// holdingItemId: 0=none, 1..N=KnownItems index+1 (Python converts to one-hot).
+    /// classId: KnownClasses index as float (Python converts to one-hot).
     /// </summary>
     public override void CollectObservations(VectorSensor sensor)
     {
         if (matchManager == null || unit == null)
         {
-            for (int i = 0; i < 46; i++) sensor.AddObservation(0f);
+            for (int i = 0; i < 44; i++) sensor.AddObservation(0f);
             return;
         }
 
+        Vector2 mapOrigin = coordinator.MapOriginWorld;
         Vector2 bounds = coordinator.MapBounds;
         Unit[] units = matchManager.Units;
 
         foreach (Unit u in units)
         {
-            sensor.AddObservation((u.GlobalPos - unit.GlobalPos) / bounds);
+            sensor.AddObservation((u.GlobalPos - mapOrigin) / bounds);
             sensor.AddObservation(u.Team == unit.Team ? 1f : -1f);
-            sensor.AddObservation(u.HoldingItem != null ? 1f : 0f);
+            int itemIdx = u.HoldingItem != null ? coordinator.GetItemIndex(u.HoldingItem.ItemData) : -1;
+            sensor.AddObservation(itemIdx >= 0 ? (float)(itemIdx + 1) : 0f);
         }
 
-        int classIdx = coordinator.GetClassIndex(unit.UnitData);
-        for (int i = 0; i < coordinator.KnownClasses.Length; i++)
-            sensor.AddObservation(i == classIdx ? 1f : 0f);
+        sensor.AddObservation((float)coordinator.GetClassIndex(unit.UnitData));
 
         float targetScore = gameScenario.BalanceConfig.TargetScore;
         sensor.AddObservation(myTeamCtx.Score / targetScore);
