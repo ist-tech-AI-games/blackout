@@ -1,3 +1,4 @@
+using Unity.MLAgents.SideChannels;
 using UnityEngine;
 
 /// <summary>
@@ -41,6 +42,7 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
     public SemanticMapRenderer SemanticMapRenderer => semanticMapRenderer;
 
     private int episodeBeginCount;
+    private SeedChannel _seedChannel;
 
     private void Awake()
     {
@@ -49,6 +51,9 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
         semanticMapRenderer.CreateTextures();
 
         gameScenario.Initialize();
+
+        _seedChannel = new SeedChannel();
+        SideChannelManager.RegisterSideChannel(_seedChannel);
 
         foreach (var agent in agents)
             agent.Setup(this, gameScenario);
@@ -122,5 +127,8 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
     {
         if (gameScenario?.EventBus != null)
             gameScenario.EventBus.Flow.OnGameEnded -= OnGameEnded;
+
+        if (_seedChannel != null)
+            SideChannelManager.UnregisterSideChannel(_seedChannel);
     }
 }
