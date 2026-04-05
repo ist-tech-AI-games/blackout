@@ -860,6 +860,8 @@ GameObject:
   - component: {fileID: 115036436}
   - component: {fileID: 115036438}
   - component: {fileID: 115036437}
+  - component: {fileID: 115036440}
+  - component: {fileID: 115036439}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -931,6 +933,57 @@ MonoBehaviour:
   - {fileID: 1954899040}
   - {fileID: 513786678}
   - {fileID: 818114059}
+--- !u!114 &115036439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115036435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27e6df7a649dfb0458b5f6f9770931b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SemanticMapRenderer
+  gameScenario: {fileID: 2101514196}
+  coordinator: {fileID: 115036440}
+  defaultMapSize: {x: 24, y: 24}
+  resolutionScale: 4
+  itemIdOffset: 6
+--- !u!114 &115036440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115036435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bd318274195d664c890c1e6f020af48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutEpisodeCoordinator
+  gameScenario: {fileID: 2101514196}
+  agents:
+  - {fileID: 1245834325}
+  - {fileID: 1115291955}
+  - {fileID: 1645190541}
+  - {fileID: 1439497211}
+  - {fileID: 1232322807}
+  - {fileID: 1783771498}
+  - {fileID: 1106492174}
+  - {fileID: 1954899042}
+  - {fileID: 1838564192}
+  - {fileID: 818114061}
+  mapBounds: {x: 24, y: 24}
+  knownClasses:
+  - {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
+  - {fileID: 11400000, guid: f9863980f99768043b410dd37e66ccdd, type: 2}
+  - {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
+  knownItems:
+  - {fileID: 11400000, guid: 23c7f56fb5cdc624882b96a622870993, type: 2}
+  - {fileID: 11400000, guid: f8624c08aeac3f94db43bb6ece59dc5a, type: 2}
+  - {fileID: 11400000, guid: c04d6da18dffca64681c46b8902ab390, type: 2}
+  semanticMapRenderer: {fileID: 115036439}
 --- !u!1001 &171235707
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -939,6 +992,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 377511276}
     m_Modifications:
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.5
@@ -1560,6 +1617,10 @@ PrefabInstance:
       propertyPath: <Team>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 22.5
@@ -1599,6 +1660,10 @@ PrefabInstance:
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7658599086326824163, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: TeamId
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7792513021531417483, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_Name
@@ -8009,10 +8074,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 377511276}
     m_Modifications:
+    - target: {fileID: 787001862262613015, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: m_SensorName
+      value: SemanticMap
+      objectReference: {fileID: 0}
     - target: {fileID: 1648117945456905193, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: <Team>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 22.5
@@ -8053,6 +8126,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7658599086326824163, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: TeamId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7792513021531417483, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_Name
       value: Unit (9)
@@ -8078,6 +8155,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b9cdddcf22cfdf4cb11720e66dd0a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
+--- !u!114 &818114061 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 818114057}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!1 &911226009
 GameObject:
   m_ObjectHideFlags: 0
@@ -14490,6 +14578,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 377511276}
     m_Modifications:
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.5
@@ -14754,6 +14846,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 377511276}
     m_Modifications:
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.5
@@ -14831,6 +14927,10 @@ PrefabInstance:
       propertyPath: <Team>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 22.5
@@ -14871,6 +14971,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7658599086326824163, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: TeamId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7792513021531417483, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_Name
       value: Unit (6)
@@ -14896,6 +15000,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b9cdddcf22cfdf4cb11720e66dd0a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
+--- !u!114 &1106492174 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 1103801456}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
+--- !u!114 &1115291955 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 978560091}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!1 &1118333051
 GameObject:
   m_ObjectHideFlags: 0
@@ -14948,6 +15074,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ActiveEffectsView
   iconRoot: {fileID: 911226010}
   iconPrefab: {fileID: 8727525941036367993, guid: 27375b07f81fff84db9fb3f284ebddca, type: 3}
+--- !u!114 &1232322807 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 171235707}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!4 &1245834321 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
@@ -14964,6 +15101,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b9cdddcf22cfdf4cb11720e66dd0a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
+--- !u!114 &1245834325 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 1968177648282763629}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!1 &1281944972
 GameObject:
   m_ObjectHideFlags: 0
@@ -15050,6 +15198,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 377511276}
     m_Modifications:
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.5
@@ -15115,6 +15267,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b9cdddcf22cfdf4cb11720e66dd0a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
+--- !u!114 &1439497211 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 1439497207}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!1 &1460599316
 GameObject:
   m_ObjectHideFlags: 0
@@ -15544,6 +15707,17 @@ MonoBehaviour:
   m_Spacing: {x: 6, y: 0}
   m_Constraint: 2
   m_ConstraintCount: 1
+--- !u!114 &1645190541 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 1097950226}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!1 &1674602836
 GameObject:
   m_ObjectHideFlags: 0
@@ -16003,6 +16177,10 @@ PrefabInstance:
       propertyPath: <Team>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 22.5
@@ -16043,6 +16221,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7658599086326824163, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: TeamId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7792513021531417483, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_Name
       value: Unit (5)
@@ -16068,6 +16250,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b9cdddcf22cfdf4cb11720e66dd0a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
+--- !u!114 &1783771498 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 1783771494}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!1 &1814898262
 GameObject:
   m_ObjectHideFlags: 0
@@ -16105,6 +16298,17 @@ RectTransform:
   m_AnchoredPosition: {x: -20, y: 0}
   m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 1, y: 0.5}
+--- !u!114 &1838564192 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 513786676}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!1 &1842436407
 GameObject:
   m_ObjectHideFlags: 0
@@ -16267,6 +16471,10 @@ PrefabInstance:
       propertyPath: <Team>k__BackingField
       value: 
       objectReference: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+    - target: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: unitIndex
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7083232782364253922, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_LocalPosition.x
       value: 22.5
@@ -16307,6 +16515,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7658599086326824163, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+      propertyPath: TeamId
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7792513021531417483, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
       propertyPath: m_Name
       value: Unit (7)
@@ -16332,6 +16544,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b9cdddcf22cfdf4cb11720e66dd0a0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Unit
+--- !u!114 &1954899042 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4885104189766659904, guid: 311412b4b672e9c44a8bcf65fb036791, type: 3}
+  m_PrefabInstance: {fileID: 1954899038}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b88399714b5cf65458e7d8f425a1c322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackOutAgent
 --- !u!1 &2009305750
 GameObject:
   m_ObjectHideFlags: 0

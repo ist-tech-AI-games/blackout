@@ -54,6 +54,15 @@ public class GameScenario : MonoBehaviour
     /// <summary>Gets the active game balance configuration containing all tunable values.</summary>
     public GameBalanceConfig BalanceConfig => balanceConfig;
 
+    /// <summary>Gets the match manager responsible for units, teams, and win conditions.</summary>
+    public MatchManager MatchManager => gameManager;
+
+    /// <summary>Gets the map manager for tile queries and coordinate conversion.</summary>
+    public MapManager MapManager => mapManager;
+
+    /// <summary>Gets the level director that manages item spawning and episode lifecycle.</summary>
+    public LevelDirector LevelDirector => levelDirector;
+
     /// <summary>
     /// Initializes the game scenario and all dependent managers.
     /// Called once at game startup by GameBootstrapper.

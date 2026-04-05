@@ -48,6 +48,9 @@ public class LevelDirector : MonoBehaviour
     // Object Pool
     private IObjectPool<ItemObject> itemPool;
     private HashSet<ItemObject> activeItems = new();
+
+    /// <summary>All currently active (non-pooled) item objects, including carried items.</summary>
+    public IReadOnlyCollection<ItemObject> ActiveItems => activeItems;
     private bool isGamePlaying = false;
 
     // Dynamic Spawning

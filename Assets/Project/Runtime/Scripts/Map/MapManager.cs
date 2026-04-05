@@ -21,6 +21,20 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     /// </summary>
     public MapSpaceInfo MapSpaceInfo => mapData?.MapSpaceInfo;
 
+    /// <summary>Width of the current map in tiles.</summary>
+    public int MapWidth => mapData?.Width ?? 0;
+
+    /// <summary>Height of the current map in tiles.</summary>
+    public int MapHeight => mapData?.Height ?? 0;
+
+    /// <summary>
+    /// World-space position of the bottom-left corner of the map.
+    /// Used as origin for absolute position normalization in ML observations.
+    /// </summary>
+    public Vector2 MapOriginWorld => mapData != null
+        ? (Vector2)tilemap.CellToWorld((Vector3Int)mapData.MapSpaceInfo.BottomLeft)
+        : Vector2.zero;
+
     // Pre-computed tile cache for efficient random sampling
     private List<MapTile> allTilesCache;
 
@@ -125,7 +139,11 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     /// </summary>
     /// <param name="cellPos">Cell position to query.</param>
     /// <returns>Map tile at the position, or null if out of bounds.</returns>
-    public MapTile GetTile(Vector2Int cellPos) => mapData?.GetTile(cellPos.x, cellPos.y);
+    public MapTile GetTile(Vector2Int cellPos)
+    {
+        Vector2Int bottomLeft = mapData.MapSpaceInfo.BottomLeft;
+        return mapData?.GetTile(cellPos.x - bottomLeft.x, cellPos.y - bottomLeft.y);
+    }
 
     /// <summary>
     /// Gets the tile at the given world position.
