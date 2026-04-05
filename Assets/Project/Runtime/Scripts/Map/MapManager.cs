@@ -125,7 +125,11 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     /// </summary>
     /// <param name="cellPos">Cell position to query.</param>
     /// <returns>Map tile at the position, or null if out of bounds.</returns>
-    public MapTile GetTile(Vector2Int cellPos) => mapData?.GetTile(cellPos.x, cellPos.y);
+    public MapTile GetTile(Vector2Int cellPos)
+    {
+        Vector2Int bottomLeft = mapData.MapSpaceInfo.BottomLeft;
+        return mapData?.GetTile(cellPos.x - bottomLeft.x, cellPos.y - bottomLeft.y);
+    }
 
     /// <summary>
     /// Gets the tile at the given world position.
