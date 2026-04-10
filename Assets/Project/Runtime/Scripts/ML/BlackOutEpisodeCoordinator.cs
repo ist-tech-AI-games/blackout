@@ -46,10 +46,15 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
 
     private void Awake()
     {
-        // Prevent FixedUpdate catch-up spiral: without this cap, a slow Python response
-        // causes Unity to queue up many FixedUpdates in one frame, which floods Python with
-        // observations and makes the next response even slower → timeout after ~60s.
-        Time.maximumDeltaTime = Time.fixedDeltaTime * 2f;
+        // Allow Unity to run in background (required for standalone training builds).
+        Application.runInBackground = true;
+
+        // Cap to exactly 1 FixedUpdate per gRPC frame.
+        // - Prevents FixedUpdate catch-up spiral (slow Python → flood → timeout).
+        // - Prevents terminal/decision race at high time_scale: if game ends in FU1 and a
+        //   new episode starts in FU2 of the same frame, Python only sees the decision obs
+        //   and never receives the terminal signal → episode never terminates.
+        Time.maximumDeltaTime = Time.fixedDeltaTime;
 
         // Must create RenderTextures before agent.Setup() so RenderTextureSensorComponent
         // can reference them during Agent.OnEnable() → InitializeSensors().
