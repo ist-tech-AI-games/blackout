@@ -46,6 +46,11 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
 
     private void Awake()
     {
+        // Prevent FixedUpdate catch-up spiral: without this cap, a slow Python response
+        // causes Unity to queue up many FixedUpdates in one frame, which floods Python with
+        // observations and makes the next response even slower → timeout after ~60s.
+        Time.maximumDeltaTime = Time.fixedDeltaTime * 2f;
+
         // Must create RenderTextures before agent.Setup() so RenderTextureSensorComponent
         // can reference them during Agent.OnEnable() → InitializeSensors().
         semanticMapRenderer.CreateTextures();
@@ -118,7 +123,7 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
         {
             Unit unit = mm.Units[agent.UnitIndex];
             float reward = winner == null ? 0f : winner == unit.Team ? 1f : -1f;
-            agent.SetReward(reward);
+            agent.AddReward(reward);
             agent.EndEpisode();
         }
     }
