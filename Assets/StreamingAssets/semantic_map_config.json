@@ -1,5 +1,7 @@
 {
   "resolution_scale": 4,
+  "n_items": 1,
+  "n_classes": 3,
   "ids": {
     "empty": 0,
     "wall": 1,
