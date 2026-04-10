@@ -52,6 +52,7 @@ public class MatchManager : MonoBehaviour
     private Dictionary<TeamData, TeamContext> teamContextTable;
     private GameEventBus eventBus;
     private GameBalanceConfig balanceConfig;
+    private bool gameEnded;
 
     /// <summary>
     /// Initializes match manager with game scenario settings.
@@ -84,6 +85,7 @@ public class MatchManager : MonoBehaviour
     /// </summary>
     public void ResetMatchData()
     {
+        gameEnded = false;
         foreach (var ctx in teamContextTable.Values)
             ctx.Reset();
     }
@@ -139,9 +141,11 @@ public class MatchManager : MonoBehaviour
     private void CheckWinCondition(TeamContext context)
     {
         if (context.Team == NeutralTeam) return;
+        if (gameEnded) return;
 
         if (context.Score >= balanceConfig.TargetScore)
         {
+            gameEnded = true;
             eventBus.Flow.PublishGameEnded(context.Team);
             Debug.Log($"Game Ended! Winner: {context.Team.name}");
         }
@@ -153,6 +157,9 @@ public class MatchManager : MonoBehaviour
     /// </summary>
     private void OnTimeExpired()
     {
+        if (gameEnded) return;
+        gameEnded = true;
+
         Debug.Log("Checking winner...");
         int scoreA = GetTeamContext(TeamA).Score;
         int scoreB = GetTeamContext(TeamB).Score;
