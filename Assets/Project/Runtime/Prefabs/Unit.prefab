@@ -77,6 +77,7 @@ GameObject:
   - component: {fileID: 7658599086326824163}
   - component: {fileID: 4885104189766659904}
   - component: {fileID: 787001862262613015}
+  - component: {fileID: 2910658551427910348}
   m_Layer: 0
   m_Name: Unit
   m_TagString: Untagged
@@ -143,7 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
   m_BrainParameters:
-    VectorObservationSize: 44
+    VectorObservationSize: 45
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -192,9 +193,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Sensors.RenderTextureSensorComponent
   m_RenderTexture: {fileID: 8400000, guid: e920c2208c323984e85f0def63c17721, type: 2}
   m_SensorName: SemanticMap
-  m_Grayscale: 0
+  m_Grayscale: 1
   m_ObservationStacks: 1
-  m_Compression: 1
+  m_Compression: 0
+--- !u!114 &2910658551427910348
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7792513021531417483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
+  DecisionPeriod: 1
+  DecisionStep: 0
+  TakeActionsBetweenDecisions: 1
 --- !u!1 &8288464958816960509
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,10 +8,16 @@ using SensorCompressionType = Unity.MLAgents.Sensors.SensorCompressionType;
 /// <summary>
 /// ML-Agents Agent for a single unit in Black Out.
 /// 10 instances run in parallel (5 per team), sharing behavior name "BlackOutUnit".
-/// Behavior Parameters: Vector Observation Size=44, Continuous Actions=2, TeamId=0(A)/1(B).
+/// Behavior Parameters: Vector Observation Size=RawObsSize(45), Continuous Actions=2, TeamId=0(A)/1(B).
 /// </summary>
 public class BlackOutAgent : Agent
 {
+    // Raw obs layout: 10 units × 4 floats + class(1) + scalars(3) + unitIndex(1) = 45
+    private const int NUnits = 10;
+    private const int UnitBlockSize = 4;
+    private const int ScalarCount = 3;
+    private const int RawObsSize = NUnits * UnitBlockSize + 1 + ScalarCount + 1;
+
     [SerializeField] private int unitIndex; // 0-4: Team A, 5-9: Team B
 
     private BlackOutEpisodeCoordinator coordinator;
@@ -68,9 +74,10 @@ public class BlackOutAgent : Agent
     }
 
     /// <summary>
-    /// Collects 44-float observation vector.
-    /// Layout: [0-39] per-unit block ×10 (absPos×2, teamSign, holdingItemId),
-    ///         [40] self classId, [41] own score, [42] opp score, [43] time remaining.
+    /// Collects RawObsSize-float observation vector.
+    /// Layout: [0~39] per-unit block ×10 (absPos×2, teamSign, holdingItemId),
+    ///         [40] self classId, [41~43] own score / opp score / time remaining,
+    ///         [44] unitIndex (routing only — Python uses this to map agent_id, not passed to policy).
     /// absPos = (globalPos - mapOrigin) / mapBounds, normalized to [0,1].
     /// holdingItemId: 0=none, 1..N=KnownItems index+1 (Python converts to one-hot).
     /// classId: KnownClasses index as float (Python converts to one-hot).
@@ -79,7 +86,7 @@ public class BlackOutAgent : Agent
     {
         if (matchManager == null || unit == null)
         {
-            for (int i = 0; i < 44; i++) sensor.AddObservation(0f);
+            for (int i = 0; i < RawObsSize; i++) sensor.AddObservation(0f);
             return;
         }
 
@@ -101,6 +108,14 @@ public class BlackOutAgent : Agent
         sensor.AddObservation(myTeamCtx.Score / targetScore);
         sensor.AddObservation(opponentCtx.Score / targetScore);
         sensor.AddObservation(gameScenario.EpisodeTimer != null ? 1f - gameScenario.EpisodeTimer.Ratio : 1f);
+
+        // [RawObsSize-1] unitIndex — used by Python to map agent_id → unitIndex without assumptions.
+        sensor.AddObservation((float)unitIndex);
+    }
+
+    private void FixedUpdate()
+    {
+        RequestDecision();
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -116,8 +131,14 @@ public class BlackOutAgent : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         var ca = actionsOut.ContinuousActions;
-        ca[0] = Input.GetAxis("Horizontal");
-        ca[1] = Input.GetAxis("Vertical");
+        ca[0] = UnityEngine.InputSystem.Keyboard.current != null
+            ? (UnityEngine.InputSystem.Keyboard.current.dKey.isPressed ? 1f :
+               UnityEngine.InputSystem.Keyboard.current.aKey.isPressed ? -1f : 0f)
+            : 0f;
+        ca[1] = UnityEngine.InputSystem.Keyboard.current != null
+            ? (UnityEngine.InputSystem.Keyboard.current.wKey.isPressed ? 1f :
+               UnityEngine.InputSystem.Keyboard.current.sKey.isPressed ? -1f : 0f)
+            : 0f;
     }
 
     private void OnDestroy()
