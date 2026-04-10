@@ -43,10 +43,10 @@ public class SemanticMapRenderer : MonoBehaviour
 
     private Texture2D textureA;
     private Texture2D textureB;
-    private Color32[] pixelsA;
-    private Color32[] pixelsB;
-    private Color32[] backgroundA;
-    private Color32[] backgroundB;
+    private byte[] pixelsA;
+    private byte[] pixelsB;
+    private byte[] backgroundA;
+    private byte[] backgroundB;
     private int texWidth;
     private int texHeight;
     private bool isInitialized;
@@ -99,9 +99,8 @@ public class SemanticMapRenderer : MonoBehaviour
             int idx = GetItemIndex(item.ItemData);
             if (idx < 0) continue;
             byte id = (byte)(itemIdOffset + idx);
-            Color32 col = ToColor(id);
-            WritePixel(pixelsA, item.GlobalPos, mapOrigin, col);
-            WritePixel(pixelsB, item.GlobalPos, mapOrigin, col);
+            WritePixel(pixelsA, item.GlobalPos, mapOrigin, id);
+            WritePixel(pixelsB, item.GlobalPos, mapOrigin, id);
         }
 
         // Overlay units (written last → highest priority)
@@ -109,17 +108,15 @@ public class SemanticMapRenderer : MonoBehaviour
         {
             if (!unit.gameObject.activeInHierarchy) continue;
             bool isTeamAUnit = unit.Team == teamA;
-            WritePixel(pixelsA, unit.GlobalPos, mapOrigin,
-                ToColor(isTeamAUnit ? ID_ALLY_UNIT : ID_ENEMY_UNIT));
-            WritePixel(pixelsB, unit.GlobalPos, mapOrigin,
-                ToColor(isTeamAUnit ? ID_ENEMY_UNIT : ID_ALLY_UNIT));
+            WritePixel(pixelsA, unit.GlobalPos, mapOrigin, isTeamAUnit ? ID_ALLY_UNIT : ID_ENEMY_UNIT);
+            WritePixel(pixelsB, unit.GlobalPos, mapOrigin, isTeamAUnit ? ID_ENEMY_UNIT : ID_ALLY_UNIT);
         }
 
-        textureA.SetPixels32(pixelsA);
+        textureA.LoadRawTextureData(pixelsA);
         textureA.Apply(false);
         Graphics.Blit(textureA, RenderTextureTeamA);
 
-        textureB.SetPixels32(pixelsB);
+        textureB.LoadRawTextureData(pixelsB);
         textureB.Apply(false);
         Graphics.Blit(textureB, RenderTextureTeamB);
     }
@@ -150,12 +147,12 @@ public class SemanticMapRenderer : MonoBehaviour
         RenderTextureTeamA = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32);
         RenderTextureTeamB = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32);
 
-        textureA = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false);
-        textureB = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false);
-        pixelsA = new Color32[texWidth * texHeight];
-        pixelsB = new Color32[texWidth * texHeight];
-        backgroundA = new Color32[texWidth * texHeight];
-        backgroundB = new Color32[texWidth * texHeight];
+        textureA = new Texture2D(texWidth, texHeight, TextureFormat.R8, false);
+        textureB = new Texture2D(texWidth, texHeight, TextureFormat.R8, false);
+        pixelsA = new byte[texWidth * texHeight];
+        pixelsB = new byte[texWidth * texHeight];
+        backgroundA = new byte[texWidth * texHeight];
+        backgroundB = new byte[texWidth * texHeight];
     }
 
     /// <summary>
@@ -195,22 +192,19 @@ public class SemanticMapRenderer : MonoBehaviour
                 }
 
                 int idx = py * texWidth + px;
-                backgroundA[idx] = ToColor(idA);
-                backgroundB[idx] = ToColor(idB);
+                backgroundA[idx] = idA;
+                backgroundB[idx] = idB;
             }
         }
     }
 
-    private void WritePixel(Color32[] pixels, Vector2 worldPos, Vector2 mapOrigin, Color32 color)
+    private void WritePixel(byte[] pixels, Vector2 worldPos, Vector2 mapOrigin, byte id)
     {
         int px = Mathf.FloorToInt((worldPos.x - mapOrigin.x) * resolutionScale);
         int py = Mathf.FloorToInt((worldPos.y - mapOrigin.y) * resolutionScale);
         if (px < 0 || px >= texWidth || py < 0 || py >= texHeight) return;
-        pixels[py * texWidth + px] = color;
+        pixels[py * texWidth + px] = id;
     }
-
-    // R=G=B=id so RenderTextureSensor grayscale reads id/255 (full coefficient sum = 1.0)
-    private static Color32 ToColor(byte id) => new Color32(id, id, id, 255);
 
     private int GetItemIndex(ItemData itemData)
     {
