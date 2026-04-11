@@ -26,6 +26,9 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
     [Tooltip("Semantic map renderer (shared, one per scene). Renders ally/enemy ID map per team.")]
     [SerializeField] private SemanticMapRenderer semanticMapRenderer;
 
+    [Tooltip("Agent that broadcasts both team maps over gRPC (reduces graphic transmissions from 10 to 2).")]
+    [SerializeField] private MapObsAgent mapObsAgent;
+
     /// <summary>Gets the map size used to normalize absolute positions in observations.</summary>
     public Vector2 MapBounds => mapBounds;
 
@@ -43,6 +46,7 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
 
     private int episodeBeginCount;
     private SeedChannel _seedChannel;
+    private RewardConfig rewardConfig;
 
     private void Awake()
     {
@@ -56,17 +60,20 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
         //   and never receives the terminal signal → episode never terminates.
         Time.maximumDeltaTime = Time.fixedDeltaTime;
 
+        gameScenario.Initialize();
+
         // Must create RenderTextures before agent.Setup() so RenderTextureSensorComponent
         // can reference them during Agent.OnEnable() → InitializeSensors().
         semanticMapRenderer.CreateTextures();
-
-        gameScenario.Initialize();
+        mapObsAgent?.Setup(semanticMapRenderer.RenderTextureTeamA);
 
         _seedChannel = new SeedChannel();
         SideChannelManager.RegisterSideChannel(_seedChannel);
 
+        rewardConfig = RewardConfig.Load();
+
         foreach (var agent in agents)
-            agent.Setup(this, gameScenario);
+            agent.Setup(this, gameScenario, rewardConfig);
 
         semanticMapRenderer.SubscribeEvents(gameScenario.EventBus);
         gameScenario.EventBus.Flow.OnGameEnded += OnGameEnded;

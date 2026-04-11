@@ -303,7 +303,7 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     /// Handles unit death by destroying held item and triggering respawn.
     /// Publishes unit death event and invokes OnUnitDead.
     /// </summary>
-    public void Die()
+    public void Die(Unit killer = null)
     {
         Debug.Log($"{gameObject.name} dead");
         if (HoldingItem != null)
@@ -312,7 +312,7 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
             HoldingItem = null;
         }
 
-        matchManager.EventBus.Unit.PublishUnitDead(this);
+        matchManager.EventBus.Unit.PublishUnitKilled(killer, this);
 
         matchManager.RespawnUnit(this);
         OnUnitDead?.Invoke(this);

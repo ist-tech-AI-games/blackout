@@ -137,6 +137,9 @@ public class SemanticMapRenderer : MonoBehaviour
 
         RenderBackground();
         isInitialized = true;
+        // Pre-render immediately so MapObsAgent's first RequestDecision in the next
+        // FixedUpdate sees a valid RenderTexture, not an empty/stale one.
+        Render();
     }
 
     private void AllocateAll()
@@ -144,15 +147,34 @@ public class SemanticMapRenderer : MonoBehaviour
         RenderTextureTeamA?.Release();
         RenderTextureTeamB?.Release();
 
-        RenderTextureTeamA = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32);
-        RenderTextureTeamB = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32);
+        // sRGB RT: ML-Agents' RenderTextureSensor reads via ReadPixels into an sRGB Texture2D.
+        // Using a linear RT causes the read to apply linear→sRGB gamma encoding, which corrupts
+        // small semantic ID values (e.g. wall id=1 → linear 0.004 → sRGB byte 46 → wrong channel).
+        // With sRGB RT + sRGB source texture, the blit is a round-trip (sRGB→linear→sRGB = identity)
+        // and ML-Agents receives id/255 directly, which round-trips correctly in preprocess_graphic.
+        RenderTextureTeamA = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+        RenderTextureTeamB = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+        RenderTextureTeamA.Create();
+        RenderTextureTeamB.Create();
+        ClearRT(RenderTextureTeamA);
+        ClearRT(RenderTextureTeamB);
 
-        textureA = new Texture2D(texWidth, texHeight, TextureFormat.R8, false);
-        textureB = new Texture2D(texWidth, texHeight, TextureFormat.R8, false);
-        pixelsA = new byte[texWidth * texHeight];
-        pixelsB = new byte[texWidth * texHeight];
-        backgroundA = new byte[texWidth * texHeight];
-        backgroundB = new byte[texWidth * texHeight];
+        // sRGB source: R=G=B=semantic_id. Blit to sRGB RT is a lossless round-trip.
+        // Grayscale formula: 0.299*R + 0.587*G + 0.114*B = id/255 when R=G=B.
+        textureA = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false, false);
+        textureB = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false, false);
+        pixelsA = new byte[texWidth * texHeight * 3];
+        pixelsB = new byte[texWidth * texHeight * 3];
+        backgroundA = new byte[texWidth * texHeight * 3];
+        backgroundB = new byte[texWidth * texHeight * 3];
+    }
+
+    private static void ClearRT(RenderTexture rt)
+    {
+        var prev = RenderTexture.active;
+        RenderTexture.active = rt;
+        GL.Clear(false, true, Color.clear);
+        RenderTexture.active = prev;
     }
 
     /// <summary>
@@ -191,9 +213,13 @@ public class SemanticMapRenderer : MonoBehaviour
                     idA = idB = ID_EMPTY;
                 }
 
-                int idx = py * texWidth + px;
-                backgroundA[idx] = idA;
-                backgroundB[idx] = idB;
+                int byteIdx = (py * texWidth + px) * 3;
+                backgroundA[byteIdx]     = idA; // R
+                backgroundA[byteIdx + 1] = idA; // G
+                backgroundA[byteIdx + 2] = idA; // B
+                backgroundB[byteIdx]     = idB;
+                backgroundB[byteIdx + 1] = idB;
+                backgroundB[byteIdx + 2] = idB;
             }
         }
     }
@@ -203,7 +229,10 @@ public class SemanticMapRenderer : MonoBehaviour
         int px = Mathf.FloorToInt((worldPos.x - mapOrigin.x) * resolutionScale);
         int py = Mathf.FloorToInt((worldPos.y - mapOrigin.y) * resolutionScale);
         if (px < 0 || px >= texWidth || py < 0 || py >= texHeight) return;
-        pixels[py * texWidth + px] = id;
+        int byteIdx = (py * texWidth + px) * 3;
+        pixels[byteIdx]     = id; // R
+        pixels[byteIdx + 1] = id; // G
+        pixels[byteIdx + 2] = id; // B
     }
 
     private int GetItemIndex(ItemData itemData)

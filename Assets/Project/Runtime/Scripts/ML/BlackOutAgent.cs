@@ -26,8 +26,13 @@ public class BlackOutAgent : Agent
     private Unit unit;
     private TeamContext myTeamCtx;
     private TeamContext opponentCtx;
+    private RewardConfig rewardConfig;
     private Action<int> onMyTeamScored;
     private Action<int> onOpponentScored;
+    private Action<Unit, ItemObject> onItemPickedUp;
+    private Action<Unit, Unit> onUnitKilled;
+    private Action<Unit, ItemData> onItemDeposited;
+    private Action<ItemObject> onItemAbsorbed;
 
     public int UnitIndex => unitIndex;
 
@@ -35,20 +40,61 @@ public class BlackOutAgent : Agent
     /// Initializes agent references and subscribes to score events.
     /// Called once by <see cref="BlackOutEpisodeCoordinator"/> after <see cref="GameScenario.Initialize"/>.
     /// </summary>
-    public void Setup(BlackOutEpisodeCoordinator episodeCoordinator, GameScenario scenario)
+    public void Setup(BlackOutEpisodeCoordinator episodeCoordinator, GameScenario scenario, RewardConfig config)
     {
         coordinator = episodeCoordinator;
         gameScenario = scenario;
+        rewardConfig = config;
         matchManager = scenario.MatchManager;
         unit = matchManager.Units[unitIndex];
         myTeamCtx = matchManager.GetTeamContext(unit.Team);
         opponentCtx = matchManager.GetTeamContext(matchManager.OpponentTeam(unit.Team));
 
         // NOTE: score > 0 guard prevents false reward when TeamContext.Reset() fires OnScoreChanged(0).
-        onMyTeamScored = score => { if (score > 0) AddReward(0.1f); };
-        onOpponentScored = score => { if (score > 0) AddReward(-0.1f); };
+        onMyTeamScored = score => { if (score > 0) AddReward(rewardConfig.teamScoreReward); };
+        onOpponentScored = score => { if (score > 0) AddReward(-rewardConfig.teamScorePenalty); };
+
+        onItemPickedUp = (picker, item) =>
+        {
+            bool fromOurStorage = item.OwnedTile?.OwnedRegion is Storage s && s.OwnedTeam == unit.Team;
+            float rv = rewardConfig.GetItemReward(item.ItemData.name);
+            if (picker == unit && !fromOurStorage)
+            {
+                // 내가 필드에서 집음
+                AddReward(rv);
+            }
+            else if (picker.Team != unit.Team && fromOurStorage)
+            {
+                // 적이 아군 창고에서 탈취 → 아군 전체 패널티
+                AddReward(-rv);
+            }
+        };
+
+        onUnitKilled = (killer, victim) =>
+        {
+            if (killer == unit) AddReward(rewardConfig.killReward);
+            if (victim.Team == unit.Team) AddReward(-rewardConfig.deathPenalty);
+        };
+
+        onItemDeposited = (depositor, itemData) =>
+        {
+            if (depositor != unit) return;
+            AddReward(rewardConfig.GetItemReward(itemData.name));
+        };
+
+        onItemAbsorbed = item =>
+        {
+            // 아군 창고 아이템 absorb → 아군 전체 보상
+            if (item.OwnedTile?.OwnedRegion is Storage s && s.OwnedTeam == unit.Team)
+                AddReward(rewardConfig.GetItemReward(item.ItemData.name));
+        };
+
         myTeamCtx.OnScoreChanged += onMyTeamScored;
         opponentCtx.OnScoreChanged += onOpponentScored;
+        scenario.EventBus.Unit.OnItemPickedUp += onItemPickedUp;
+        scenario.EventBus.Unit.OnUnitKilled += onUnitKilled;
+        scenario.EventBus.Unit.OnItemDeposited += onItemDeposited;
+        scenario.EventBus.Unit.OnItemAbsorbed += onItemAbsorbed;
 
         // Assign the correct team-perspective RenderTexture to the sensor.
         // Must be done here (Awake phase) before Agent.OnEnable() calls InitializeSensors().
@@ -145,5 +191,12 @@ public class BlackOutAgent : Agent
     {
         if (myTeamCtx != null) myTeamCtx.OnScoreChanged -= onMyTeamScored;
         if (opponentCtx != null) opponentCtx.OnScoreChanged -= onOpponentScored;
+        if (gameScenario?.EventBus != null)
+        {
+            gameScenario.EventBus.Unit.OnItemPickedUp -= onItemPickedUp;
+            gameScenario.EventBus.Unit.OnUnitKilled -= onUnitKilled;
+            gameScenario.EventBus.Unit.OnItemDeposited -= onItemDeposited;
+            gameScenario.EventBus.Unit.OnItemAbsorbed -= onItemAbsorbed;
+        }
     }
 }
