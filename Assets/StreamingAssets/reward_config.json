@@ -1,0 +1,10 @@
+{
+    "itemRewards": [
+        { "itemName": "Battery", "value": 0.2 },
+        { "itemName": "SpeedBuff", "value": 0.1 }
+    ],
+    "killReward": 0.3,
+    "deathPenalty": 0.2,
+    "teamScoreReward": 0.1,
+    "teamScorePenalty": 0.1
+}
