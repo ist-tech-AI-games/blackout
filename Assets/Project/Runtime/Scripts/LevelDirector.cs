@@ -131,6 +131,7 @@ public class LevelDirector : MonoBehaviour
 
         MapData mapData = mapGenerator.GenerateMapData();
         mapManager.Initialize(mapData);
+        mapManager.WireEventBusToRegions(eventBus);
 
         matchManager.ResetAllUnits(mapData);
         mapGenerator.SpawnItemObjects(mapManager, SpawnItem);

@@ -132,6 +132,17 @@ public class MapManager : MonoBehaviour, IMapInteractionContext
     /// <returns>List of map objects at the position, or null if tile doesn't exist.</returns>
     public List<IMapObject> GetObjectsAt(Vector2Int cellPos) => GetTile(cellPos)?.MapObjects;
 
+    /// <summary>
+    /// Sets the GameEventBus on all map regions so they can publish gameplay events.
+    /// Must be called after Initialize().
+    /// </summary>
+    public void WireEventBusToRegions(GameEventBus eventBus)
+    {
+        foreach (var tile in allTilesCache)
+            if (tile.OwnedRegion != null)
+                tile.OwnedRegion.EventBus = eventBus;
+    }
+
     // helpers
 
     /// <summary>
