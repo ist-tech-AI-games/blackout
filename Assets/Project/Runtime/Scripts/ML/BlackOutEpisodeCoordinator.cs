@@ -60,12 +60,12 @@ public class BlackOutEpisodeCoordinator : MonoBehaviour
         //   and never receives the terminal signal → episode never terminates.
         Time.maximumDeltaTime = Time.fixedDeltaTime;
 
+        gameScenario.Initialize();
+
         // Must create RenderTextures before agent.Setup() so RenderTextureSensorComponent
         // can reference them during Agent.OnEnable() → InitializeSensors().
         semanticMapRenderer.CreateTextures();
         mapObsAgent?.Setup(semanticMapRenderer.RenderTextureTeamA);
-
-        gameScenario.Initialize();
 
         _seedChannel = new SeedChannel();
         SideChannelManager.RegisterSideChannel(_seedChannel);
