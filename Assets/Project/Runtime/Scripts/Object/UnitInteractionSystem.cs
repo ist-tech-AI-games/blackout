@@ -76,16 +76,16 @@ public class UnitInteractionSystem
 
         if (attackerWins && defenderWins)
         {
-            attacker.Die();
-            defender.Die();
+            attacker.Die(null);
+            defender.Die(null);
         }
         else if (attackerWins)
         {
-            defender.Die();
+            defender.Die(attacker);
         }
         else if (defenderWins)
         {
-            attacker.Die();
+            attacker.Die(defender);
         }
     }
 }

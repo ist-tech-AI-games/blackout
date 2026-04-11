@@ -38,8 +38,10 @@ public class Storage : MapRegion
         if (shouldRelease)
         {
             ItemObject item = unit.RetrieveItem();
+            ItemData depositedItemData = item.ItemData;
             if (shouldDestory)
                 item.OnDestroyed();
+            EventBus?.Unit.PublishItemDeposited(unit, depositedItemData);
         }
         else
         {

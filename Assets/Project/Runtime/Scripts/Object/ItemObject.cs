@@ -172,6 +172,7 @@ public class ItemObject : MonoBehaviour, IMapObject, IResettable
     /// </summary>
     public void OnAbsorbed()
     {
+        matchManager.EventBus?.Unit.PublishItemAbsorbed(this);
         ExitCurrentRegion(ItemExitReason.Absorbed);
         OnDestroyed(skipEffect: true);
     }

@@ -35,10 +35,15 @@ public class GameEventBus
     public class UnitEvents
     {
         public event Action<Unit, ItemObject> OnItemPickedUp;
-        public event Action<Unit> OnUnitDead;
-        
+        /// <summary>killer is null when both units die simultaneously.</summary>
+        public event Action<Unit, Unit> OnUnitKilled;
+        public event Action<Unit, ItemData> OnItemDeposited;
+        public event Action<ItemObject> OnItemAbsorbed;
+
         public void PublishItemPickedUp(Unit u, ItemObject i) => OnItemPickedUp?.Invoke(u, i);
-        public void PublishUnitDead(Unit u) => OnUnitDead?.Invoke(u);
-        public void Clear() { OnItemPickedUp = null; OnUnitDead = null; }
+        public void PublishUnitKilled(Unit killer, Unit victim) => OnUnitKilled?.Invoke(killer, victim);
+        public void PublishItemDeposited(Unit u, ItemData d) => OnItemDeposited?.Invoke(u, d);
+        public void PublishItemAbsorbed(ItemObject i) => OnItemAbsorbed?.Invoke(i);
+        public void Clear() { OnItemPickedUp = null; OnUnitKilled = null; OnItemDeposited = null; OnItemAbsorbed = null; }
     }
 }
