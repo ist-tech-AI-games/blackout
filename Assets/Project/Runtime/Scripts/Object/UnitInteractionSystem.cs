@@ -19,12 +19,12 @@ public class UnitInteractionSystem
         ownerUnit = owner;
     }
 
-    // 이동 이후 상호작용 처리
+    // Handle interactions after movement
     public void ProcessInteractions(Vector2 currentWorldPos)
     {
         Vector2Int currentCell = mapContext.WorldToCell(currentWorldPos);
 
-        // 1. 주변 타일 탐색
+        // 1. Scan neighboring tiles
         foreach (Vector2Int delta in neighborDelta)
         {
             Vector2Int checkCell = currentCell + delta;
@@ -34,10 +34,12 @@ public class UnitInteractionSystem
                 var objectsOnTile = mapContext.GetObjectsAt(checkCell);
                 if (objectsOnTile == null) continue;
 
-                // 리스트가 수정될 수 있으므로 역순 순회
-                for (int i = objectsOnTile.Count - 1; i >= 0; i--)
+                // Snapshot before iterating: combat resolution (Die → Teleport) removes units
+                // from this live list, so reverse iteration alone is insufficient when 2+ units
+                // are removed (e.g. draw combat where both attacker and defender die).
+                var snapshot = objectsOnTile.ToArray();
+                foreach (IMapObject targetObj in snapshot)
                 {
-                    IMapObject targetObj = objectsOnTile[i];
                     if (targetObj == (IMapObject)ownerUnit) continue;
 
                     if (CollisionUtils.IsOverlapping(
@@ -62,10 +64,7 @@ public class UnitInteractionSystem
         }
         else if (other is ItemObject item)
         {
-            // 아이템 획득 로직...
-            // Unit 클래스에 public 메서드(PickUpItem 등)를 만들어 호출하거나
-            // ownerUnit.OnOverlapped(item)을 호출하여 위임
-            ownerUnit.OnOverlapped(item); 
+            ownerUnit.OnOverlapped(item);
         }
     }
 
