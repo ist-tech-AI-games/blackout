@@ -147,19 +147,22 @@ public class SemanticMapRenderer : MonoBehaviour
         RenderTextureTeamA?.Release();
         RenderTextureTeamB?.Release();
 
-        // Linear RT: no sRGB conversion so id/255 values are stored as-is.
-        RenderTextureTeamA = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
-        RenderTextureTeamB = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
+        // sRGB RT: ML-Agents' RenderTextureSensor reads via ReadPixels into an sRGB Texture2D.
+        // Using a linear RT causes the read to apply linear→sRGB gamma encoding, which corrupts
+        // small semantic ID values (e.g. wall id=1 → linear 0.004 → sRGB byte 46 → wrong channel).
+        // With sRGB RT + sRGB source texture, the blit is a round-trip (sRGB→linear→sRGB = identity)
+        // and ML-Agents receives id/255 directly, which round-trips correctly in preprocess_graphic.
+        RenderTextureTeamA = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+        RenderTextureTeamB = new RenderTexture(texWidth, texHeight, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
         RenderTextureTeamA.Create();
         RenderTextureTeamB.Create();
         ClearRT(RenderTextureTeamA);
         ClearRT(RenderTextureTeamB);
 
-        // RGB24 linear: write R=G=B=semantic_id so grayscale sensor recovers id/255 exactly.
-        // (Grayscale formula = 0.299*R + 0.587*G + 0.114*B = id/255 when R=G=B.)
-        // linear=true prevents GPU gamma-correction when sampling small id values.
-        textureA = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false, true);
-        textureB = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false, true);
+        // sRGB source: R=G=B=semantic_id. Blit to sRGB RT is a lossless round-trip.
+        // Grayscale formula: 0.299*R + 0.587*G + 0.114*B = id/255 when R=G=B.
+        textureA = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false, false);
+        textureB = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false, false);
         pixelsA = new byte[texWidth * texHeight * 3];
         pixelsB = new byte[texWidth * texHeight * 3];
         backgroundA = new byte[texWidth * texHeight * 3];
