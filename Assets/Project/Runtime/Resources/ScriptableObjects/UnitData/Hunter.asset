@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd06dc7d797413b46a65755a55784fde, type: 3}
   m_Name: Hunter
   m_EditorClassIdentifier: Assembly-CSharp::UnitData
-  <Sprite>k__BackingField: {fileID: 8153324073202784663, guid: d8d946f70345f494188d9b1feb31b35f, type: 3}
+  <Sprite>k__BackingField: {fileID: -2943168097862940069, guid: 4ab054481704741459480286277c0aca, type: 3}
   <CollisionBound>k__BackingField:
     Type: 0
     Width: 0.65
