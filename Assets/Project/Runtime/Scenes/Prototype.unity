@@ -16098,6 +16098,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeamAreaViewer
   tilemap: {fileID: 976056231}
+  teamA: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
+  teamB: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
+  teamATile: {fileID: 11400000, guid: 08643954334508849ba6d948858fb49f, type: 2}
+  teamBTile: {fileID: 11400000, guid: 0b37d25a442835f40b20f9aa4056bb53, type: 2}
 --- !u!4 &1702558275
 Transform:
   m_ObjectHideFlags: 0
