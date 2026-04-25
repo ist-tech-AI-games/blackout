@@ -1656,13 +1656,13 @@ MonoBehaviour:
   <CollectorData>k__BackingField: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
   <HunterData>k__BackingField: {fileID: 11400000, guid: f9863980f99768043b410dd37e66ccdd, type: 2}
   <TeamAArt>k__BackingField:
-    Carrier: {fileID: 8807132550029231868, guid: a02c907026d98d54db2e2a0be69b20c0, type: 3}
-    Collector: {fileID: -1779523449259944957, guid: fceca6eb377925a48a6a316242e202d0, type: 3}
-    Hunter: {fileID: -2943168097862940069, guid: 4ab054481704741459480286277c0aca, type: 3}
+    Carrier: {fileID: 224823693, guid: 4630ab0ad719da34ca5ee35a6532d3e5, type: 3}
+    Collector: {fileID: -689520407193891599, guid: 4630ab0ad719da34ca5ee35a6532d3e5, type: 3}
+    Hunter: {fileID: 619534503, guid: 4630ab0ad719da34ca5ee35a6532d3e5, type: 3}
   <TeamBArt>k__BackingField:
-    Carrier: {fileID: -6074106204110954251, guid: eb2fedf992e0132419fd2249a51fb741, type: 3}
-    Collector: {fileID: -6593283352141079540, guid: 1219504120c6cc14b9178ed67a477431, type: 3}
-    Hunter: {fileID: 1338527792253364130, guid: 7c8baea1dad129c4a95bf8279eb616ab, type: 3}
+    Carrier: {fileID: -4556197565260342421, guid: 4630ab0ad719da34ca5ee35a6532d3e5, type: 3}
+    Collector: {fileID: 1026407549584056185, guid: 4630ab0ad719da34ca5ee35a6532d3e5, type: 3}
+    Hunter: {fileID: -742827879, guid: 4630ab0ad719da34ca5ee35a6532d3e5, type: 3}
 --- !u!1001 &513786676
 PrefabInstance:
   m_ObjectHideFlags: 0
