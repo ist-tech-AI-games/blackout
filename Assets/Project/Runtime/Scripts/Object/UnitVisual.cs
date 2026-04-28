@@ -8,7 +8,6 @@ public class UnitVisual : MonoBehaviour
     void Start()
     {
         spriteRenderer.sprite = unit.UnitData.Sprite;
-        spriteRenderer.color = unit.Team.TeamColor;
     }
 
     void OnEnable()
@@ -23,6 +22,6 @@ public class UnitVisual : MonoBehaviour
 
     private void OnUnitClassChanged(UnitData unitData)
     {
-        spriteRenderer.sprite = unitData.Sprite;
+        spriteRenderer.sprite = UnitVisualManager.Instance.GetArt(unitData, unit.Team);
     }
 }
