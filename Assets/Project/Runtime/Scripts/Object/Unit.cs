@@ -20,6 +20,11 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     public event Action<Unit> OnUnitDead;
 
     /// <summary>
+    /// Invoked when the unit's stats change.
+    /// </summary>
+    public event Action OnStatsChanged;
+
+    /// <summary>
     /// Current unit class data (Worker, Guard, or Carrier).
     /// </summary>
     [field: SerializeField]
@@ -32,9 +37,17 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     public TeamData Team { get; private set; }
 
     /// <summary>
-    /// Collision bound from the current unit class.
+    /// Collision bound from the current unit class, scaled by UnitSize.
     /// </summary>
-    public CollisionBound CollisionBound => UnitData.CollisionBound;
+    public CollisionBound CollisionBound
+    {
+        get
+        {
+            var bound = UnitData.CollisionBound;
+            bound.Width *= UnitSize;
+            return bound;
+        }
+    }
 
     /// <summary>
     /// Current world position of the unit.
@@ -80,6 +93,18 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     }
 
     /// <summary>
+    /// Current unit size multiplier based on team modifiers.
+    /// </summary>
+    public float UnitSize
+    {
+        get
+        {
+            if (matchManager == null) return 1f;
+            return GetCachedStat(StatType.UnitSize, 1f);
+        }
+    }
+
+    /// <summary>
     /// Gets a stat value from cache, calculating it if not cached.
     /// Cache is invalidated automatically when team modifiers change.
     /// </summary>
@@ -110,6 +135,7 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
     private void InvalidateStatCache()
     {
         cachedStats.Clear();
+        OnStatsChanged?.Invoke();
     }
 
     /// <summary>
@@ -320,6 +346,9 @@ public class Unit : MonoBehaviour, IMapObject, IResettable
 
     void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(GlobalPos, UnitData.CollisionBound.Width / 2);
+        if (UnitData != null)
+        {
+            Gizmos.DrawWireSphere(GlobalPos, CollisionBound.Width / 2);
+        }
     }
 }
