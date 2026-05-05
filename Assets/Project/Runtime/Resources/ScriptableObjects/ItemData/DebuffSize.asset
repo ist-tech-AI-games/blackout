@@ -15,7 +15,7 @@ MonoBehaviour:
   defaultSprite: {fileID: -1882819141, guid: 4630ab0ad719da34ca5ee35a6532d3e5, type: 3}
   amountTiers: []
   <Effects>k__BackingField:
-  - {fileID: 11400000, guid: 49daf8cc517565a409c73f0d5ddef163, type: 2}
+  - {fileID: 11400000, guid: 230b302bef609d645908a1c57c107e5b, type: 2}
   <MaxItemAmount>k__BackingField: 1
   <CollisionBound>k__BackingField:
     Type: 0
