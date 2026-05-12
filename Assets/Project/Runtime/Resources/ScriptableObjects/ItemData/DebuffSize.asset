@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 325aa1a78d97a6a40bf550da2fc41655, type: 3}
+  m_Name: DebuffSize
+  m_EditorClassIdentifier: Assembly-CSharp::ItemData
+  defaultSprite: {fileID: -1882819141, guid: 4630ab0ad719da34ca5ee35a6532d3e5, type: 3}
+  amountTiers: []
+  <Effects>k__BackingField:
+  - {fileID: 11400000, guid: 230b302bef609d645908a1c57c107e5b, type: 2}
+  <MaxItemAmount>k__BackingField: 1
+  <CollisionBound>k__BackingField:
+    Type: 0
+    Width: 0.8
+  <InteractionOption>k__BackingField: 1

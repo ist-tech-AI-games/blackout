@@ -5,6 +5,7 @@ using UnityEngine;
 public enum StatType
 {
     MoveSpeed,
+    UnitSize,
     // ...
     // 유형을 추가할 수는 있으나, 시스템 적용 필요.
 }
