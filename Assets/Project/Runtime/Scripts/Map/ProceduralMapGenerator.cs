@@ -103,6 +103,26 @@ public class ProceduralMapGenerator : MapGenerator
             }
         }
 
+        // Spawn one of each non-battery item type (index 1+), symmetric if configured
+        for (int typeIdx = 1; typeIdx < itemTypes.Length && validPositions.Count > 0; typeIdx++)
+        {
+            int idx = Random.Range(0, validPositions.Count);
+            Vector2Int posA = validPositions[idx];
+            validPositions.RemoveAt(idx);
+            spawnItemCallback(itemTypes[typeIdx], 1, posA);
+
+            if (BalanceConfig.SymmetricBatterySpawn)
+            {
+                Vector2Int posB = new(posA.y, posA.x);
+                if (posA != posB && validPositions.Contains(posB))
+                {
+                    spawnItemCallback(itemTypes[typeIdx], 1, posB);
+                    validPositions.Remove(posB);
+                }
+            }
+        }
+
+        // Fill remaining score with Battery (index 0)
         int currentScore = 0;
 
         while (currentScore < BalanceConfig.InitialBatteryTotalScore && validPositions.Count > 0)
@@ -112,11 +132,8 @@ public class ProceduralMapGenerator : MapGenerator
             validPositions.RemoveAt(idx);
 
             int amount = Random.Range(BalanceConfig.MinBatteryAmount, BalanceConfig.MaxBatteryAmount + 1);
-
-            // TODO: extend to use other item types
             ItemData data = itemTypes[0];
 
-            // 생성 A
             spawnItemCallback(data, amount, posA);
             currentScore += amount;
 
@@ -124,7 +141,7 @@ public class ProceduralMapGenerator : MapGenerator
             {
                 Vector2Int posB = new(posA.y, posA.x);
 
-                if (posA != posB && validPositions.Contains(posB)) 
+                if (posA != posB && validPositions.Contains(posB))
                 {
                     spawnItemCallback(data, amount, posB);
                     currentScore += amount;
