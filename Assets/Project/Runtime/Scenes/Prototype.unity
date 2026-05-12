@@ -948,7 +948,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SemanticMapRenderer
   gameScenario: {fileID: 2101514196}
-  knownItems: []
+  knownItems:
+  - {fileID: 11400000, guid: 23c7f56fb5cdc624882b96a622870993, type: 2}
+  - {fileID: 11400000, guid: 83ced6216f34be848bc0ebb413f6912b, type: 2}
+  - {fileID: 11400000, guid: c9f8b8e0d8ce79f46868af6ae8df6a6b, type: 2}
+  - {fileID: 11400000, guid: a1fe15f0f6cce4544aae91bcd25a2517, type: 2}
+  - {fileID: 11400000, guid: 5f0f8d8363b3581408072ce93548e31b, type: 2}
   defaultMapSize: {x: 24, y: 24}
   resolutionScale: 4
   itemIdOffset: 6
