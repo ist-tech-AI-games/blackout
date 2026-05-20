@@ -15925,7 +15925,7 @@ MonoBehaviour:
   episodePlaceholder: '[Ends] {0:00}:{1:00}'
   absorptionFillImage: {fileID: 1739048305}
   nextAbsorptionText: {fileID: 930764871}
-  absorptionPlaceholder: '[Absorp] {0:0.0}s'
+  absorptionPlaceholder: '[Absorb] {0:0.0}s'
 --- !u!224 &1674602838
 RectTransform:
   m_ObjectHideFlags: 0
