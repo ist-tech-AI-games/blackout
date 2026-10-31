@@ -18,7 +18,7 @@ public class RegionDataDrawer : PropertyDrawer
         
         var inputTypeProp = property.FindPropertyRelative("InputUnitType");
         var outputTypeProp = property.FindPropertyRelative("OutputUnitType");
-        var isLockedProp = property.FindPropertyRelative("IsLocked");
+        var maxUnitsProp = property.FindPropertyRelative("MaxUnitsPerTeam");
 
         Rect currentRect = new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight);
 
@@ -52,7 +52,7 @@ public class RegionDataDrawer : PropertyDrawer
                 EditorGUI.PropertyField(currentRect, outputTypeProp, new GUIContent("Output Unit"));
                 currentRect.y += lineHeight;
 
-                EditorGUI.PropertyField(currentRect, isLockedProp);
+                EditorGUI.PropertyField(currentRect, maxUnitsProp, new GUIContent("Max Units Per Team"));
                 currentRect.y += lineHeight;
             }
             // 창고나 기본은 추가 필드 없음

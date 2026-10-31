@@ -397,7 +397,7 @@ MonoBehaviour:
     Type: 1
     InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
     OutputUnitType: {fileID: 11400000, guid: f9863980f99768043b410dd37e66ccdd, type: 2}
-    IsLocked: 0
+    MaxUnitsPerTeam: 2
   - Name: Carrier Sanctuary A
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
     Area:
@@ -408,7 +408,7 @@ MonoBehaviour:
     Type: 1
     InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
     OutputUnitType: {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
-    IsLocked: 1
+    MaxUnitsPerTeam: 1
   - Name: Carrier Sanctuary B
     Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
     Area:
@@ -419,7 +419,7 @@ MonoBehaviour:
     Type: 1
     InputUnitType: {fileID: 11400000, guid: 6144416ddc79b5e41abdc93f33bc7068, type: 2}
     OutputUnitType: {fileID: 11400000, guid: 24033f08a9aac9f479975210f14e72bb, type: 2}
-    IsLocked: 1
+    MaxUnitsPerTeam: 1
   - Name: Storage A1
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
     Area:
@@ -430,7 +430,7 @@ MonoBehaviour:
     Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   - Name: Storage B1
     Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
     Area:
@@ -441,7 +441,7 @@ MonoBehaviour:
     Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   - Name: Team A Base
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
     Area:
@@ -452,7 +452,7 @@ MonoBehaviour:
     Type: 0
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   - Name: Team B Base
     Team: {fileID: 11400000, guid: ad4b88df56fcc7e4db1082d66cc1ff3e, type: 2}
     Area:
@@ -463,7 +463,7 @@ MonoBehaviour:
     Type: 0
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   defaultRegion:
     Name: Default
     Team: {fileID: 11400000, guid: 6cb366513c8d1da41ac8a67b7539af05, type: 2}
@@ -471,7 +471,7 @@ MonoBehaviour:
     Type: 0
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   storageCandidatesA:
   - Name: Storage_A2
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
@@ -483,7 +483,7 @@ MonoBehaviour:
     Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   - Name: Storage_A3
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
     Area:
@@ -494,7 +494,7 @@ MonoBehaviour:
     Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   - Name: Storage_A4
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
     Area:
@@ -505,7 +505,7 @@ MonoBehaviour:
     Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   - Name: Storage_A5
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
     Area:
@@ -520,7 +520,7 @@ MonoBehaviour:
     Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   - Name: Storage_A6
     Team: {fileID: 11400000, guid: 9c0a95ca1849cd443bf58cee83f41cc7, type: 2}
     Area:
@@ -531,7 +531,7 @@ MonoBehaviour:
     Type: 2
     InputUnitType: {fileID: 0}
     OutputUnitType: {fileID: 0}
-    IsLocked: 0
+    MaxUnitsPerTeam: 0
   itemTileFilter: {fileID: 11400000, guid: d5545d20c3a66c7469066bed67f996d8, type: 2}
   itemTypes:
   - {fileID: 11400000, guid: 23c7f56fb5cdc624882b96a622870993, type: 2}
