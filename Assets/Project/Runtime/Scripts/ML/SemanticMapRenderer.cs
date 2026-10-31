@@ -163,6 +163,13 @@ public class SemanticMapRenderer : MonoBehaviour
         // Grayscale formula: 0.299*R + 0.587*G + 0.114*B = id/255 when R=G=B.
         textureA = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false, false);
         textureB = new Texture2D(texWidth, texHeight, TextureFormat.RGB24, false, false);
+        // Point + Clamp: Blit must copy semantic IDs as-is. With the default Bilinear filter,
+        // renderers whose sample coords drift off texel centers (e.g. Mesa llvmpipe under Xvfb)
+        // blend neighboring IDs into wrong ones (6→5, 0→1).
+        textureA.filterMode = FilterMode.Point;
+        textureB.filterMode = FilterMode.Point;
+        textureA.wrapMode = TextureWrapMode.Clamp;
+        textureB.wrapMode = TextureWrapMode.Clamp;
         pixelsA = new byte[texWidth * texHeight * 3];
         pixelsB = new byte[texWidth * texHeight * 3];
         backgroundA = new byte[texWidth * texHeight * 3];
