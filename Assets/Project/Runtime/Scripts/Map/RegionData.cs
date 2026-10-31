@@ -21,7 +21,8 @@ public class RegionData
     // sanctuary
     public UnitData InputUnitType;
     public UnitData OutputUnitType;
-    public bool IsLocked;
+    // 팀당 동시에 존재할 수 있는 변신 유닛 수. 0이면 제한 없음.
+    public int MaxUnitsPerTeam;
 
     public MapRegion CreateRuntimeRegion()
     {
@@ -34,7 +35,7 @@ public class RegionData
                 {
                     TargetInputData = InputUnitType,
                     ResultOutputData = OutputUnitType,
-                    IsUniqueInstanceConstraint = IsLocked,
+                    MaxUnitsPerTeam = MaxUnitsPerTeam,
                 };
                 break;
             case RegionType.Storage:
@@ -67,7 +68,7 @@ public static class RegionUtils
         // 성소
         mirror.InputUnitType = source.InputUnitType;
         mirror.OutputUnitType = source.OutputUnitType;
-        mirror.IsLocked = source.IsLocked;
+        mirror.MaxUnitsPerTeam = source.MaxUnitsPerTeam;
 
         if (source.Area != null)
         {
